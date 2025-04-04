@@ -1,13 +1,11 @@
 import { ChevronDown } from "lucide-react";
 import AnimatedBackground from "./animated-background";
-import NextLogo from "./next-logo";
-import SupabaseLogo from "./supabase-logo";
 import { Button } from "./ui/button";
 
 export default function Header() {
   return (
     <section className="relative pt-32 pb-20 overflow-hidden">
-      {/* <AnimatedBackground /> */}
+      <AnimatedBackground />
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">

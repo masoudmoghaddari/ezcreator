@@ -118,7 +118,7 @@ export default function AnimatedBackground() {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute top-0 left-0 w-full h-full opacity-30"
+      className="absolute top-0 left-0 w-full h-full opacity-100"
       style={{ zIndex: 0 }}
     />
   );
