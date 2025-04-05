@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { BookOpen, Bot, Settings2, SquareTerminal } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -13,6 +12,8 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { AppLogo } from "./app-logo";
+import YouTube from "./icons/youtube";
+import { Lightbulb } from "lucide-react";
 
 const data = {
   user: {
@@ -22,34 +23,26 @@ const data = {
   },
   navMain: [
     {
-      title: "Connect YouTube",
-      url: "#",
-      icon: SquareTerminal,
+      title: "Youtube",
+      url: "",
+      icon: YouTube,
       isActive: true,
+      items: [
+        {
+          title: "Connect Channel",
+          url: "#",
+        },
+        {
+          title: "Generate ideas",
+          url: "#",
+        },
+      ],
     },
-    // {
-    //   title: "Settings",
-    //   url: "#",
-    //   icon: Settings2,
-    //   items: [
-    //     {
-    //       title: "General",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Team",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Billing",
-    //       url: "#",
-    //     },
-    //     {
-    //       title: "Limits",
-    //       url: "#",
-    //     },
-    //   ],
-    // },
+    {
+      title: "My ideas",
+      url: "",
+      icon: Lightbulb,
+    },
   ],
 };
 

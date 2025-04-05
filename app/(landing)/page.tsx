@@ -1,10 +1,11 @@
 import Hero from "@/components/hero";
-import { hasEnvVars } from "@/utils/supabase/check-env-vars";
 
 export default async function Home() {
   return (
     <>
-      <Hero />
+      <div className="flex flex-col gap-20 p-5">
+        <Hero />
+      </div>
     </>
   );
 }

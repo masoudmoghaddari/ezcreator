@@ -1,5 +1,4 @@
 // import { Sidebar } from "@/components/ui/sidebar";
-import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
 const StudioLayout = async ({
@@ -7,12 +6,7 @@ const StudioLayout = async ({
 }: Readonly<{
   children: React.ReactNode;
 }>) => {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const user = true;
   if (!user) {
     return redirect("/sign-in");
   }
