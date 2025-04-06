@@ -19,7 +19,8 @@ const data = {
   user: {
     name: "shadcn",
     email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    avatar:
+      "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/3b/3b63b32c40b142bd5a69bb170826d5c8cbf3a041.jpg",
   },
   navMain: [
     {
@@ -30,7 +31,7 @@ const data = {
       items: [
         {
           title: "Channels",
-          url: "#",
+          url: "/studio/youtube",
         },
         {
           title: "Generate ideas",

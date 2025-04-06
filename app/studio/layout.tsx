@@ -14,6 +14,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
+import { Providers } from "./providers";
 
 const StudioLayout = async ({
   children,
@@ -48,7 +49,9 @@ const StudioLayout = async ({
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
+        <Providers>
+          <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
+        </Providers>
       </SidebarInset>
     </SidebarProvider>
   );
