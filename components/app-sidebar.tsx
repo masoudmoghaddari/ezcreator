@@ -29,7 +29,7 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "Connect Channel",
+          title: "Channels",
           url: "#",
         },
         {

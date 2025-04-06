@@ -1,3 +1,6 @@
+-- CreateEnum
+CREATE TYPE "Plan" AS ENUM ('FREE', 'PRO', 'PRO_PLUS');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -8,8 +11,11 @@ CREATE TABLE "User" (
     "last_name" TEXT,
     "avatar_url" TEXT,
     "onboarding_complete" BOOLEAN NOT NULL DEFAULT false,
+    "plan" "Plan" NOT NULL DEFAULT 'FREE',
+    "subscriptionDate" TIMESTAMP(3),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
+    "deleted_at" TIMESTAMP(3),
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -28,6 +34,26 @@ CREATE TABLE "YoutubeChannel" (
     CONSTRAINT "YoutubeChannel_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "YoutubeVideo" (
+    "id" TEXT NOT NULL,
+    "channel_id" TEXT NOT NULL,
+    "video_id" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT,
+    "thumbnail_url" TEXT,
+    "duration" INTEGER,
+    "view_count" INTEGER,
+    "like_count" INTEGER,
+    "dislike_count" INTEGER,
+    "comment_count" INTEGER,
+    "published_at" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "YoutubeVideo_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_external_id_key" ON "User"("external_id");
 
@@ -43,5 +69,11 @@ CREATE UNIQUE INDEX "YoutubeChannel_channel_id_key" ON "YoutubeChannel"("channel
 -- CreateIndex
 CREATE INDEX "YoutubeChannel_user_id_idx" ON "YoutubeChannel"("user_id");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "YoutubeVideo_video_id_key" ON "YoutubeVideo"("video_id");
+
 -- AddForeignKey
 ALTER TABLE "YoutubeChannel" ADD CONSTRAINT "YoutubeChannel_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "YoutubeVideo" ADD CONSTRAINT "YoutubeVideo_channel_id_fkey" FOREIGN KEY ("channel_id") REFERENCES "YoutubeChannel"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
