@@ -5,11 +5,12 @@
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
 import AddChannelDialog from "./components/AddChannelDialog";
-import ChannelSelector from "./components/ChannelSelector";
+import { ChannelSelector } from "./components/ChannelSelector";
 import ChannelOverview from "./components/ChannelOverview";
 import GeneratedIdeas from "./components/GeneratedIdeas";
 import VideoTable from "./components/VideoTable";
 import { Button } from "@/components/ui/button";
+import { useUserChannels } from "@/lib/hooks/use-user-channels";
 
 const initialChannels = [
   { id: "1", title: "Ali Abdaal" },
@@ -32,6 +33,12 @@ export default function YoutubeStudioPage() {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [sortBy, setSortBy] = useState("views");
   const [sortOrder, setSortOrder] = useState("desc");
+
+  const {
+    data: channels = [],
+    isLoading: channelsIsLoading,
+    isError: channelsIsError,
+  } = useUserChannels();
 
   const sortedVideos = [...dummyVideos].sort((a, b) => {
     if (sortBy === "title") {
@@ -57,10 +64,12 @@ export default function YoutubeStudioPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 pt-4">
       <ChannelSelector
-        channels={userChannels}
-        selectedChannel={selectedChannel}
+        channels={channels}
+        isLoading={channelsIsLoading}
+        isError={channelsIsError}
+        selectedChannelId={selectedChannel?.id || null}
         onSelectChannel={setSelectedChannel}
-        onOpenAddDialog={() => setShowAddDialog(true)}
+        onAddNew={() => setShowAddDialog(true)}
       />
 
       <AddChannelDialog

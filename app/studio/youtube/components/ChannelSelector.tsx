@@ -1,35 +1,39 @@
 // components/ChannelSelector.tsx
 
-"use client";
-
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardHeader,
   CardTitle,
-  CardContent,
   CardDescription,
+  CardContent,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Youtube, Plus } from "lucide-react";
+import { Youtube, Loader2 } from "lucide-react";
 
 interface Channel {
   id: string;
   title: string;
+  avatar_url?: string;
+  synced_at?: string;
 }
 
-interface Props {
+interface ChannelSelectorProps {
   channels: Channel[];
-  selectedChannel: Channel;
+  isLoading: boolean;
+  isError: boolean;
+  selectedChannelId: string | null;
   onSelectChannel: (channel: Channel) => void;
-  onOpenAddDialog: () => void;
+  onAddNew: () => void;
 }
 
-export default function ChannelSelector({
+export function ChannelSelector({
   channels,
-  selectedChannel,
+  isLoading,
+  isError,
+  selectedChannelId,
   onSelectChannel,
-  onOpenAddDialog,
-}: Props) {
+  onAddNew,
+}: ChannelSelectorProps) {
   return (
     <Card className="mb-2">
       <CardHeader>
@@ -39,18 +43,32 @@ export default function ChannelSelector({
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-3">
+        {isLoading && (
+          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Loading channels...
+          </div>
+        )}
+        {isError && (
+          <p className="text-sm text-red-500">Failed to load channels</p>
+        )}
+        {!isLoading && !isError && channels.length === 0 && (
+          <p className="text-sm text-muted-foreground">
+            You haven’t added any channels yet.
+          </p>
+        )}
         {channels.map((channel) => (
           <Button
             key={channel.id}
-            variant={channel.id === selectedChannel.id ? "default" : "outline"}
+            variant={channel.id === selectedChannelId ? "default" : "outline"}
             onClick={() => onSelectChannel(channel)}
           >
             <Youtube className="w-4 h-4 mr-1" />
             {channel.title}
           </Button>
         ))}
-        <Button variant="ghost" onClick={onOpenAddDialog}>
-          <Plus className="w-4 h-4 mr-1" /> Add New Channel
+        <Button variant="ghost" onClick={onAddNew}>
+          ➕ Add New Channel
         </Button>
       </CardContent>
     </Card>
