@@ -8,14 +8,8 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
+import { Channel } from "@/lib/types";
 import { Youtube, Loader2 } from "lucide-react";
-
-interface Channel {
-  id: string;
-  title: string;
-  avatar_url?: string;
-  synced_at?: string;
-}
 
 interface ChannelSelectorProps {
   channels: Channel[];

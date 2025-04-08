@@ -11,13 +11,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { timeAgo } from "@/lib/utils/date";
+import { SortBy, SortOrder } from "@/lib/types";
+import { useRefetchChannel } from "@/lib/hooks/use-refetch-channel";
+import { useToast } from "@/components/hooks/use-toast";
+import { useTransition } from "react";
 
 interface ChannelOverviewProps {
-  selectedChannel: { id: string; title: string };
-  sortBy: string;
-  sortOrder: string;
-  onSortByChange: (value: string) => void;
-  onSortOrderChange: (value: string) => void;
+  selectedChannel: { id: string; title: string; syncedAt: Date };
+  sortBy: SortBy;
+  sortOrder: SortOrder;
+  onSortByChange: (value: SortBy) => void;
+  onSortOrderChange: (value: SortOrder) => void;
   children: React.ReactNode;
 }
 
@@ -29,6 +34,26 @@ export default function ChannelOverview({
   onSortOrderChange,
   children,
 }: ChannelOverviewProps) {
+  const { toast } = useToast();
+  const { mutateAsync: refetchChannel, isPending } = useRefetchChannel();
+
+  const handleRefetch = async () => {
+    try {
+      await refetchChannel(selectedChannel.id);
+      toast({
+        title: "Refetch Complete",
+        description: "Channel data has been updated.",
+        variant: "success",
+      });
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="border p-4 rounded-md">
       <div className="flex justify-between items-center gap-2 mb-2">
@@ -38,9 +63,16 @@ export default function ChannelOverview({
             <span className="font-medium">{selectedChannel.title}</span>
           </p>
           <p className="text-xs text-muted-foreground flex items-center gap-2">
-            Last synced: 3 days ago
-            <Button variant="link" size="sm" className="p-0 h-auto text-xs">
-              <RefreshCcw className="w-3 h-3 mr-1" /> Refetch
+            Last synced: {timeAgo(new Date(selectedChannel.syncedAt))}
+            <Button
+              variant="link"
+              size="sm"
+              className="p-2 h-auto text-xs gap-1"
+              disabled={isPending}
+              onClick={handleRefetch}
+            >
+              <RefreshCcw className="w-3 h-3 mr-1" />
+              {isPending ? "Refetching..." : "Refetch"}
             </Button>
           </p>
         </div>

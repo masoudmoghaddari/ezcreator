@@ -12,11 +12,12 @@ import { Youtube, Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/components/hooks/use-toast";
+import { Channel } from "@/lib/types";
 
 interface AddChannelDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddChannel: (channel: { id: string; title: string }) => void;
+  onAddChannel: (channel: Channel) => void;
 }
 
 async function fetchChannelPreview(url: string) {
@@ -33,9 +34,7 @@ async function fetchChannelPreview(url: string) {
   return res.json();
 }
 
-async function addChannelToDB(
-  url: string
-): Promise<{ id: string; title: string }> {
+async function addChannelToDB(url: string): Promise<Channel> {
   const res = await fetch("/api/youtube/add-channel", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -75,7 +74,12 @@ export default function AddChannelDialog({
     mutationFn: addChannelToDB,
     onSuccess: (data) => {
       console.log("Channel added:", data);
-      onAddChannel({ id: data.id, title: data.title });
+      onAddChannel({
+        id: data.id,
+        title: data.title,
+        avatarUrl: data.avatarUrl,
+        syncedAt: data.syncedAt,
+      });
       toast({
         title: "Channel added",
         description: `${data.title} saved successfully.`,
