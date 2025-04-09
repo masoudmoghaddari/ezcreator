@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
         duration: parseDuration(v.contentDetails.duration),
         view_count: parseInt(v.statistics.viewCount || "0"),
         like_count: parseInt(v.statistics.likeCount || "0"),
-        dislike_count: 0,
+        tags: v.snippet.tags?.join(",") || null,
         comment_count: parseInt(v.statistics.commentCount || "0"),
         published_at: new Date(v.snippet.publishedAt),
         channel_id: channel.id,

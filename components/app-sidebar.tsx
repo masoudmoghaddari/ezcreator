@@ -14,14 +14,9 @@ import {
 import { AppLogo } from "./app-logo";
 import YouTube from "./icons/youtube";
 import { Lightbulb } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar:
-      "https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/3b/3b63b32c40b142bd5a69bb170826d5c8cbf3a041.jpg",
-  },
   navMain: [
     {
       title: "Youtube",
@@ -48,6 +43,8 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useUser();
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -58,7 +55,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser
+          user={{
+            name: user?.firstName + " " + user?.lastName,
+            email: user?.primaryEmailAddress?.emailAddress ?? "",
+            avatar: user?.hasImage ? user.imageUrl : "",
+          }}
+        />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

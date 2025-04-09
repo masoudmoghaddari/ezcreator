@@ -15,3 +15,8 @@ export type Channel = {
   avatarUrl: string;
   syncedAt: Date;
 };
+
+export type Idea = {
+  title: string;
+  description: string;
+};

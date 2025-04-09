@@ -10,9 +10,10 @@ import { VideoTable } from "./components/VideoTable";
 import { Button } from "@/components/ui/button";
 import { useUserChannels } from "@/lib/hooks/use-user-channels";
 import { useChannelVideos } from "@/lib/hooks/use-channel-videos";
-import { Channel, SortBy, SortOrder } from "@/lib/types";
+import { Channel, Idea, SortBy, SortOrder } from "@/lib/types";
 import { Spinner } from "@/components/ui/spinner";
 import { useSyncChannel } from "@/lib/hooks/use-sync-channel";
+import { useGenerateIdeas } from "@/lib/hooks/use-generate-ideas";
 
 export default function YoutubeStudioPage() {
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(
@@ -21,6 +22,12 @@ export default function YoutubeStudioPage() {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [sortBy, setSortBy] = useState<SortBy>("engagement_score");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+  const [ideas, setIdeas] = useState<Idea[]>([]);
+
+  const { mutate: generateIdeas, isPending: isGenerating } = useGenerateIdeas(
+    selectedChannelId ?? null,
+    setIdeas
+  );
 
   const {
     data: channels = [],
@@ -163,9 +170,17 @@ export default function YoutubeStudioPage() {
           )}
 
           <div className="text-center py-14">
-            <Button size="lg" disabled={!selectedChannel}>
-              <Sparkles className="w-4 h-4 mr-2" /> Generate ideas from Top
-              Picks
+            <Button
+              size="lg"
+              disabled={!selectedChannel || isGenerating}
+              onClick={() => generateIdeas(sortedVideos)}
+            >
+              {isGenerating ? (
+                <Spinner className="w-4 h-4 mr-2" />
+              ) : (
+                <Sparkles className="w-4 h-4 mr-2" />
+              )}
+              Generate my next content idea
             </Button>
             <p className="text-sm text-muted-foreground max-w-xl mx-auto mt-3">
               We'll generate content ideas from top-performing videos of the
@@ -173,7 +188,7 @@ export default function YoutubeStudioPage() {
             </p>
           </div>
 
-          <GeneratedIdeas />
+          <GeneratedIdeas ideas={ideas} />
         </>
       )}
     </div>
