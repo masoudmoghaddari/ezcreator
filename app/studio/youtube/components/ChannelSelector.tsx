@@ -16,7 +16,7 @@ interface ChannelSelectorProps {
   isLoading: boolean;
   isError: boolean;
   selectedChannelId: string | null;
-  onSelectChannel: (channel: Channel) => void;
+  onSelectChannel: (channelId: string) => void;
   onAddNew: () => void;
 }
 
@@ -55,7 +55,7 @@ export function ChannelSelector({
           <Button
             key={channel.id}
             variant={channel.id === selectedChannelId ? "default" : "outline"}
-            onClick={() => onSelectChannel(channel)}
+            onClick={() => onSelectChannel(channel.id)}
           >
             <Youtube className="w-4 h-4 mr-1" />
             {channel.title}

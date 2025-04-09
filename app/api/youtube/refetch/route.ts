@@ -13,18 +13,19 @@ export async function POST(req: NextRequest) {
     if (!user)
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { videoId } = await req.json();
-    if (!videoId)
+    const { channelDbId } = await req.json();
+
+    if (!channelDbId)
       return NextResponse.json({ error: "Missing channelId" }, { status: 400 });
 
     const channel = await prisma.youtubeChannel.findFirst({
-      where: { id: videoId, user: { external_id: user.id } },
+      where: { id: channelDbId, user: { external_id: user.id } },
     });
 
     if (!channel)
       return NextResponse.json({ error: "Channel not found" }, { status: 404 });
 
-    const videoIds = await fetchLatestVideoIds(videoId, 30);
+    const videoIds = await fetchLatestVideoIds(channel.channel_id, 30);
     const videos = await fetchVideoDetails(videoIds);
 
     let added = 0;

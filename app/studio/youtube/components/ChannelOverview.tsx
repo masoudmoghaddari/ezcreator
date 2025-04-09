@@ -12,18 +12,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { timeAgo } from "@/lib/utils/date";
-import { SortBy, SortOrder } from "@/lib/types";
-import { useRefetchChannel } from "@/lib/hooks/use-refetch-channel";
+import { Channel, SortBy, SortOrder } from "@/lib/types";
 import { useToast } from "@/components/hooks/use-toast";
-import { useTransition } from "react";
 
 interface ChannelOverviewProps {
-  selectedChannel: { id: string; title: string; syncedAt: Date };
+  selectedChannel: Channel;
   sortBy: SortBy;
   sortOrder: SortOrder;
   onSortByChange: (value: SortBy) => void;
   onSortOrderChange: (value: SortOrder) => void;
   children: React.ReactNode;
+  resyncFunction: (channelId: string) => Promise<void>;
+  resyncIsPending: boolean;
 }
 
 export default function ChannelOverview({
@@ -33,13 +33,14 @@ export default function ChannelOverview({
   onSortByChange,
   onSortOrderChange,
   children,
+  resyncFunction,
+  resyncIsPending,
 }: ChannelOverviewProps) {
   const { toast } = useToast();
-  const { mutateAsync: refetchChannel, isPending } = useRefetchChannel();
 
   const handleRefetch = async () => {
     try {
-      await refetchChannel(selectedChannel.id);
+      await resyncFunction(selectedChannel.id);
       toast({
         title: "Refetch Complete",
         description: "Channel data has been updated.",
@@ -68,25 +69,28 @@ export default function ChannelOverview({
               variant="link"
               size="sm"
               className="p-2 h-auto text-xs gap-1"
-              disabled={isPending}
+              disabled={resyncIsPending}
               onClick={handleRefetch}
             >
               <RefreshCcw className="w-3 h-3 mr-1" />
-              {isPending ? "Refetching..." : "Refetch"}
+              {resyncIsPending ? "Refetching..." : "Refetch"}
             </Button>
           </p>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm">Sort by:</span>
           <Select onValueChange={onSortByChange} defaultValue={sortBy}>
-            <SelectTrigger className="w-[140px]">
+            <SelectTrigger className="w-[170px]">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="engagement_score">Engagement score</SelectItem>
               <SelectItem value="views">Views</SelectItem>
               <SelectItem value="likes">Likes</SelectItem>
               <SelectItem value="comments">Comments</SelectItem>
               <SelectItem value="title">Title</SelectItem>
+              <SelectItem value="duration">Duration</SelectItem>
+              <SelectItem value="published_at">Publish date</SelectItem>
             </SelectContent>
           </Select>
           <Select onValueChange={onSortOrderChange} defaultValue={sortOrder}>

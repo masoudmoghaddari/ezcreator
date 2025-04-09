@@ -8,7 +8,9 @@ export interface ChannelVideo {
   view_count: number;
   like_count: number;
   comment_count: number;
-  published_at: string;
+  published_at: Date;
+  duration: number;
+  engagement_score: number;
 }
 
 export function useChannelVideos(channelId?: string) {

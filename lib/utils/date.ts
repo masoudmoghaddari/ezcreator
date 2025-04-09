@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 export function timeAgo(date: Date): string {
   const now = new Date();
   const seconds = Math.floor((now.getTime() - date.getTime()) / 1000);
@@ -23,4 +25,19 @@ export function timeAgo(date: Date): string {
   }
 
   return rtf.format(0, "days");
+}
+
+export function formatDateToYMD(dateString: string | Date): string {
+  try {
+    return format(new Date(dateString), "yyyy-MM-dd");
+  } catch {
+    return "";
+  }
+}
+
+export function formatDuration(seconds: number | null | undefined): string {
+  if (seconds == null) return "00:00";
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 }

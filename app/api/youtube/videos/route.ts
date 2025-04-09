@@ -20,8 +20,18 @@ export async function GET(req: NextRequest) {
       like_count: true,
       comment_count: true,
       published_at: true,
+      duration: true,
     },
   });
 
-  return NextResponse.json(videos);
+  const videosWithScore = [...videos].map((v) => ({
+    ...v,
+    engagement_score: (
+      (v.view_count ?? 0) * 0.6 +
+      (v.like_count ?? 0) * 0.3 +
+      (v.comment_count ?? 0) * 0.1
+    ).toFixed(2),
+  }));
+
+  return NextResponse.json(videosWithScore);
 }

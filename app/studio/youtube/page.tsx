@@ -10,18 +10,16 @@ import { VideoTable } from "./components/VideoTable";
 import { Button } from "@/components/ui/button";
 import { useUserChannels } from "@/lib/hooks/use-user-channels";
 import { useChannelVideos } from "@/lib/hooks/use-channel-videos";
-import { SortBy, SortOrder } from "@/lib/types";
+import { Channel, SortBy, SortOrder } from "@/lib/types";
 import { Spinner } from "@/components/ui/spinner";
+import { useSyncChannel } from "@/lib/hooks/use-sync-channel";
 
 export default function YoutubeStudioPage() {
-  const [selectedChannel, setSelectedChannel] = useState<{
-    id: string;
-    title: string;
-    syncedAt: Date;
-  } | null>(null);
-
+  const [selectedChannelId, setSelectedChannelId] = useState<string | null>(
+    null
+  );
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [sortBy, setSortBy] = useState<SortBy>("views");
+  const [sortBy, setSortBy] = useState<SortBy>("engagement_score");
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
   const {
@@ -31,18 +29,23 @@ export default function YoutubeStudioPage() {
     refetch: refetchChannels,
   } = useUserChannels();
 
+  const selectedChannel =
+    channels.find((c) => c.id === selectedChannelId) || null;
+
   const {
     data: videos = [],
     isLoading: videosIsLoading,
     isError: videosIsError,
   } = useChannelVideos(selectedChannel?.id);
 
-  // Auto-select the first channel
+  const { mutateAsync: resyncChannel, isPending: resyncIsPending } =
+    useSyncChannel();
+
   useEffect(() => {
-    if (!selectedChannel && channels.length > 0) {
-      setSelectedChannel(channels[0]);
+    if (!selectedChannelId && channels.length > 0) {
+      setSelectedChannelId(channels[0].id);
     }
-  }, [channels, selectedChannel]);
+  }, [channels, selectedChannelId]);
 
   const sortedVideos = [...videos].sort((a, b) => {
     if (sortBy === "title") {
@@ -55,25 +58,33 @@ export default function YoutubeStudioPage() {
       views: "view_count",
       likes: "like_count",
       comments: "comment_count",
+      duration: "duration",
+      published_at: "published_at",
+      engagement_score: "engagement_score",
     } as const;
 
     const key = keyMap[sortBy as keyof typeof keyMap];
 
     if (key) {
+      const aVal = a[key] ?? 0;
+      const bVal = b[key] ?? 0;
+
+      if (key === "published_at") {
+        return sortOrder === "asc"
+          ? new Date(aVal).getTime() - new Date(bVal).getTime()
+          : new Date(bVal).getTime() - new Date(aVal).getTime();
+      }
+
       return sortOrder === "asc"
-        ? (a[key] ?? 0) - (b[key] ?? 0)
-        : (b[key] ?? 0) - (a[key] ?? 0);
+        ? (aVal as number) - (bVal as number)
+        : (bVal as number) - (aVal as number);
     }
 
     return 0;
   });
 
-  const handleAddChannel = (channel: {
-    id: string;
-    title: string;
-    syncedAt: Date;
-  }) => {
-    setSelectedChannel(channel);
+  const handleAddChannel = (channel: Channel) => {
+    setSelectedChannelId(channel.id);
     refetchChannels();
   };
 
@@ -110,7 +121,7 @@ export default function YoutubeStudioPage() {
           </h2>
           <p className="max-w-md mx-auto">
             Add a YouTube channel to start generating AI-powered content ideas
-            based videos.
+            based on your videos.
           </p>
           <Button size="lg" onClick={() => setShowAddDialog(true)}>
             <Sparkles className="w-4 h-4 mr-2" /> Add Your First Channel
@@ -124,10 +135,11 @@ export default function YoutubeStudioPage() {
             channels={channels}
             isLoading={channelsIsLoading}
             isError={channelsIsError}
-            selectedChannelId={selectedChannel?.id || null}
-            onSelectChannel={setSelectedChannel}
+            selectedChannelId={selectedChannelId}
+            onSelectChannel={(id) => setSelectedChannelId(id)}
             onAddNew={() => setShowAddDialog(true)}
           />
+
           {selectedChannel ? (
             <ChannelOverview
               selectedChannel={selectedChannel}
@@ -135,6 +147,8 @@ export default function YoutubeStudioPage() {
               sortOrder={sortOrder}
               onSortByChange={setSortBy}
               onSortOrderChange={setSortOrder}
+              resyncFunction={resyncChannel}
+              resyncIsPending={resyncIsPending}
             >
               <VideoTable
                 videos={sortedVideos}

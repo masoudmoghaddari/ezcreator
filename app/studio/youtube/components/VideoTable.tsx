@@ -12,6 +12,14 @@ import { Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import { formatDateToYMD, formatDuration } from "@/lib/utils/date";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+} from "@/components/ui/pagination";
+import { useState } from "react";
 
 export interface VideoItem {
   id: string;
@@ -20,7 +28,10 @@ export interface VideoItem {
   view_count: number;
   like_count: number;
   comment_count: number;
+  published_at: Date;
+  duration: number;
   topPick?: boolean;
+  engagement_score?: number;
 }
 
 interface VideoTableProps {
@@ -29,7 +40,16 @@ interface VideoTableProps {
   isError: boolean;
 }
 
+const VIDEOS_PER_PAGE = 10;
+
 export function VideoTable({ videos, isLoading, isError }: VideoTableProps) {
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(videos.length / VIDEOS_PER_PAGE);
+  const start = (currentPage - 1) * VIDEOS_PER_PAGE;
+  const end = start + itemsPerPage;
+  const paginatedVideos = videos.slice(start, start + VIDEOS_PER_PAGE);
+
   if (isLoading) {
     return (
       <div className="flex items-center gap-2 text-muted-foreground text-sm px-4 py-6">
@@ -56,60 +76,97 @@ export function VideoTable({ videos, isLoading, isError }: VideoTableProps) {
   }
 
   return (
-    <div className="overflow-x-auto border rounded-md">
-      <Table className="min-w-[900px]">
-        <TableHeader>
-          <TableRow>
-            <TableHead>Thumbnail</TableHead>
-            <TableHead>Title</TableHead>
-            <TableHead className="text-right">Views</TableHead>
-            <TableHead className="text-right">Likes</TableHead>
-            <TableHead className="text-right">Comments</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {videos.map((video) => (
-            <TableRow key={video.id}>
-              <TableCell>
-                <img
-                  src={video.thumbnail_url || ""}
-                  alt="thumbnail"
-                  className="w-12 h-auto rounded"
-                />
-              </TableCell>
-              <TableCell className="flex items-center gap-2">
-                {video.title}
-                {video.topPick && (
-                  <Badge variant="secondary" className="border">
-                    Top Pick
-                  </Badge>
-                )}
-              </TableCell>
-              <TableCell className="text-right">
-                {video.view_count > 1000
-                  ? `${(video.view_count / 1000).toFixed(0)}K`
-                  : video.view_count}
-              </TableCell>
-              <TableCell className="text-right">
-                {video.like_count > 1000
-                  ? `${(video.like_count / 1000).toFixed(0)}K`
-                  : video.like_count}
-              </TableCell>
-              <TableCell className="text-right">
-                {video.comment_count > 1000
-                  ? `${(video.comment_count / 1000).toFixed(0)}K`
-                  : video.comment_count}
-              </TableCell>
-              <TableCell className="text-right">
-                <Button size="sm" variant="outline">
-                  <Sparkles className="w-3 h-3 mr-1" /> Inspire Me
-                </Button>
-              </TableCell>
+    <>
+      <div className="overflow-x-auto border rounded-md">
+        <Table className="min-w-[900px]">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-center">Thumbnail</TableHead>
+              <TableHead>Title</TableHead>
+              <TableHead className="text-center">Views</TableHead>
+              <TableHead className="text-center">Likes</TableHead>
+              <TableHead className="text-center">Comments</TableHead>
+              <TableHead className="text-center">Duration</TableHead>
+              <TableHead className="text-center min-w-[150px]">
+                Publish date
+              </TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {paginatedVideos.map((video) => (
+              <TableRow key={video.id}>
+                <TableCell className="text-center">
+                  <img
+                    src={video.thumbnail_url || ""}
+                    alt="thumbnail"
+                    className="w-12 h-auto rounded mx-auto"
+                  />
+                </TableCell>
+                <TableCell className="flex items-center gap-2">
+                  {video.title}
+                  {video.topPick && (
+                    <Badge variant="secondary" className="border">
+                      Top Pick
+                    </Badge>
+                  )}
+                </TableCell>
+                <TableCell className="text-center">
+                  {video.view_count > 1000
+                    ? `${(video.view_count / 1000).toFixed(0)}K`
+                    : video.view_count}
+                </TableCell>
+                <TableCell className="text-center">
+                  {video.like_count > 1000
+                    ? `${(video.like_count / 1000).toFixed(0)}K`
+                    : video.like_count}
+                </TableCell>
+                <TableCell className="text-center">
+                  {video.comment_count > 1000
+                    ? `${(video.comment_count / 1000).toFixed(0)}K`
+                    : video.comment_count}
+                </TableCell>
+                <TableCell className="text-center">
+                  {formatDuration(video.duration)}
+                </TableCell>
+                <TableCell className="text-center">
+                  {formatDateToYMD(video.published_at)}
+                </TableCell>
+                <TableCell className="text-center">
+                  <Button size="sm" variant="outline">
+                    <Sparkles className="w-3 h-3 mr-1" /> Inspire Me
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-end gap-4 mt-4">
+          <div>
+            <span className="text-sm text-muted-foreground">
+              Showing {start + 1}–{Math.min(end, videos.length)} of{" "}
+              {videos.length}
+            </span>
+          </div>
+          <Pagination className="mx-0 w-auto">
+            <PaginationContent>
+              {Array.from({ length: totalPages }).map((_, index) => (
+                <PaginationItem key={index}>
+                  <PaginationLink
+                    isActive={currentPage === index + 1}
+                    onClick={() => setCurrentPage(index + 1)}
+                  >
+                    {index + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
+    </>
   );
 }
