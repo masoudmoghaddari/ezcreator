@@ -1,46 +1,21 @@
 import { prisma } from "@/utils/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { currentUser } from "@clerk/nextjs/server";
 import {
   fetchLatestVideoIds,
   fetchVideoDetails,
   parseDuration,
 } from "../common/fetchVideos";
+import { getLocalUserId } from "../common/getLocalUserId";
+import { extractIdentifier } from "./extractIdentifier";
 
 const API_KEY = process.env.YOUTUBE_API_KEY!;
 const CHANNELS_URL = "https://www.googleapis.com/youtube/v3/channels";
 
-function extractIdentifier(input: string) {
-  let id = "";
-  let handle = "";
-
-  const cleaned = input.trim();
-
-  if (cleaned.includes("/channel/")) {
-    id = cleaned.split("/channel/")[1]?.split(/[/?&#]/)[0];
-  } else if (cleaned.includes("/@")) {
-    handle = cleaned.split("/x@")[1]?.split(/[/?&#]/)[0];
-  } else if (/^[A-Za-z0-9_-]{24}$/.test(cleaned)) {
-    id = cleaned; // raw channel ID
-  } else if (/^@?[a-zA-Z0-9._-]+$/.test(cleaned)) {
-    handle = cleaned.replace(/^@/, "");
-  }
-
-  return { id, handle };
-}
-
 export async function POST(req: NextRequest) {
   try {
-    const user = await currentUser();
-    if (!user) {
+    const localUser = await getLocalUserId();
+    if (localUser.unauthorized) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const dbUser = await prisma.user.findUnique({
-      where: { external_id: user.id },
-    });
-    if (!dbUser) {
-      return NextResponse.json({ error: "No user found" }, { status: 401 });
     }
 
     const { url } = await req.json();
@@ -71,7 +46,12 @@ export async function POST(req: NextRequest) {
 
     // Check for existing channel
     const existing = await prisma.youtubeChannel.findUnique({
-      where: { channel_id: channelId },
+      where: {
+        user_id_channel_id: {
+          channel_id: channelId,
+          user_id: localUser.id,
+        },
+      },
     });
 
     if (existing) {
@@ -88,7 +68,7 @@ export async function POST(req: NextRequest) {
         channel_id: channelId,
         title: title.trim(),
         avatar_url: thumbnails?.default?.url || "",
-        user: { connect: { id: dbUser.id } },
+        user: { connect: { id: localUser.id } },
       },
     });
 
@@ -108,6 +88,7 @@ export async function POST(req: NextRequest) {
       comment_count: parseInt(v.statistics.commentCount || "0"),
       published_at: new Date(v.snippet.publishedAt),
       channel_id: savedChannel.id,
+      user_id: localUser.id,
     }));
 
     await prisma.youtubeVideo.createMany({ data: videoEntries });

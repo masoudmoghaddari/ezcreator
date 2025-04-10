@@ -6,13 +6,13 @@ import { prisma } from "@/utils/prisma";
 
 export async function GET() {
   try {
-    const user = await currentUser();
-    if (!user) {
+    const localUser = await currentUser();
+    if (!localUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const dbUser = await prisma.user.findUnique({
-      where: { external_id: user.id },
+      where: { id: localUser.id },
     });
 
     if (!dbUser) {

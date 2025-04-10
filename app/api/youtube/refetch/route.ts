@@ -6,12 +6,14 @@ import {
   fetchVideoDetails,
   parseDuration,
 } from "../common/fetchVideos";
+import { getLocalUserId } from "../common/getLocalUserId";
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await currentUser();
-    if (!user)
+    const localUser = await getLocalUserId();
+    if (localUser.unauthorized) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const { channelDbId } = await req.json();
 
@@ -19,7 +21,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing channelId" }, { status: 400 });
 
     const channel = await prisma.youtubeChannel.findFirst({
-      where: { id: channelDbId, user: { external_id: user.id } },
+      where: { id: channelDbId, user: { id: localUser.id } },
     });
 
     if (!channel)
@@ -48,6 +50,7 @@ export async function POST(req: NextRequest) {
         comment_count: parseInt(v.statistics.commentCount || "0"),
         published_at: new Date(v.snippet.publishedAt),
         channel_id: channel.id,
+        user_id: localUser.id,
       };
 
       if (!existing) {

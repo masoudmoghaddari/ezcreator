@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Sparkles, Youtube } from "lucide-react";
 import AddChannelDialog from "./components/AddChannelDialog";
 import { ChannelSelector } from "./components/ChannelSelector";
@@ -24,10 +24,19 @@ export default function YoutubeStudioPage() {
   const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
   const [ideas, setIdeas] = useState<Idea[]>([]);
 
-  const { mutate: generateIdeas, isPending: isGenerating } = useGenerateIdeas(
-    selectedChannelId ?? null,
-    setIdeas
-  );
+  const ideasSectionRef = useRef<HTMLDivElement | null>(null);
+
+  // const { mutate: generateIdeas, isPending: isGenerating } = useGenerateIdeas(
+  //   selectedChannelId ?? null,
+  //   setIdeas
+  // );
+
+  const { mutate: generateIdeas, isPending: isGenerating } = useGenerateIdeas({
+    channelId: selectedChannelId ?? null,
+    onSuccess: (ideas) => {
+      setIdeas(ideas);
+    },
+  });
 
   const {
     data: channels = [],
@@ -47,6 +56,12 @@ export default function YoutubeStudioPage() {
 
   const { mutateAsync: resyncChannel, isPending: resyncIsPending } =
     useSyncChannel();
+
+  useEffect(() => {
+    if (ideas.length > 0 && ideasSectionRef.current) {
+      ideasSectionRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [ideas]);
 
   useEffect(() => {
     if (!selectedChannelId && channels.length > 0) {
@@ -187,8 +202,11 @@ export default function YoutubeStudioPage() {
               selected channel.
             </p>
           </div>
-
-          <GeneratedIdeas ideas={ideas} />
+          <div ref={ideasSectionRef}>
+            {selectedChannelId && ideas.length > 0 && (
+              <GeneratedIdeas ideas={ideas} sourceId={selectedChannelId} />
+            )}
+          </div>
         </>
       )}
     </div>

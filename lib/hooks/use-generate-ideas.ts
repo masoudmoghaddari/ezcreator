@@ -3,10 +3,12 @@ import { useToast } from "@/components/hooks/use-toast";
 import { VideoItem } from "@/app/studio/youtube/components/VideoTable";
 import { Idea } from "../types";
 
-export function useGenerateIdeas(
-  channelId: string | null,
-  onSuccess: (ideas: Idea[]) => void
-) {
+interface Args {
+  channelId: string | null;
+  onSuccess: (ideas: Idea[]) => void;
+}
+
+export function useGenerateIdeas({ channelId, onSuccess }: Args) {
   const { toast } = useToast();
 
   return useMutation({

@@ -36,6 +36,8 @@ model User {
   updated_at      DateTime         @updatedAt
   deleted_at      DateTime?
   youtubeChannels YoutubeChannel[]
+  YoutubeVideo    YoutubeVideo[]
+  GeneratedIdea   GeneratedIdea[]
 
   @@index([external_id])
 }
@@ -43,16 +45,18 @@ model User {
 model YoutubeChannel {
   id         String   @id @default(cuid())
   user_id    String
-  channel_id String   @unique
+  channel_id String
   title      String
   avatar_url String
   synced_at  DateTime @default(now())
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  user   User           @relation(fields: [user_id], references: [id])
-  videos YoutubeVideo[]
+  user          User            @relation(fields: [user_id], references: [id])
+  videos        YoutubeVideo[]
+  GeneratedIdea GeneratedIdea[]
 
+  @@unique([user_id, channel_id])
   @@index([user_id])
 }
 
@@ -71,6 +75,33 @@ model YoutubeVideo {
   published_at  DateTime
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
+  user_id       String
 
-  channel YoutubeChannel @relation(fields: [channel_id], references: [id])
+  user          User            @relation(fields: [user_id], references: [id])
+  channel       YoutubeChannel  @relation(fields: [channel_id], references: [id])
+  GeneratedIdea GeneratedIdea[]
+}
+
+enum PlatformType {
+  YOUTUBE
+  TIKTOK
+  INSTAGRAM
+  TWITTER
+}
+
+model GeneratedIdea {
+  id          String       @id @default(cuid())
+  source_id   String // e.g. channel_id, account_id, page_id etc.
+  context_id  String? // e.g. video_id, post_id, reel_id, etc.
+  title       String
+  description String
+  type        PlatformType @default(YOUTUBE)
+  user_id     String
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+
+  user           User            @relation(fields: [user_id], references: [id])
+  // Relations (optional, only if sticking to Prisma relations per platform)
+  youtubeChannel YoutubeChannel? @relation(fields: [source_id], references: [id])
+  youtubeVideo   YoutubeVideo?   @relation(fields: [context_id], references: [id])
 }
