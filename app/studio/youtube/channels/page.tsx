@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Sparkles, Youtube } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import AddChannelDialog from "./components/AddChannelDialog";
 import { ChannelSelector } from "./components/ChannelSelector";
 import ChannelOverview from "./components/ChannelOverview";
@@ -15,6 +15,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useSyncChannel } from "@/lib/hooks/use-sync-channel";
 import { useGenerateIdeas } from "@/lib/hooks/use-generate-ideas";
 import { sortVideos } from "@/app/api/youtube/common/sortVideos";
+import { YouTube } from "@/components/icons";
 
 export default function YoutubeStudioPage() {
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(
@@ -83,7 +84,7 @@ export default function YoutubeStudioPage() {
       {channelsIsLoading && (
         <div className="border rounded-md p-10 text-center text-muted-foreground space-y-4 bg-muted/50">
           <div className="flex justify-center">
-            <Youtube className="w-10 h-10 text-primary mb-2" />
+            <YouTube className="w-10 h-10 text-primary mb-2" />
           </div>
           <h2 className="text-xl font-semibold text-foreground">
             Loading channels...
@@ -98,7 +99,7 @@ export default function YoutubeStudioPage() {
       {!channelsIsLoading && channels.length === 0 && (
         <div className="border rounded-md p-10 text-center text-muted-foreground space-y-4 bg-muted/50">
           <div className="flex justify-center">
-            <Youtube className="w-10 h-10 text-primary mb-2" />
+            <YouTube className="w-10 h-10 text-primary mb-2" />
           </div>
           <h2 className="text-xl font-semibold text-foreground">
             No channels added yet

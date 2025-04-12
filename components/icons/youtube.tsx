@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function YouTube(props: React.SVGProps<SVGSVGElement>) {
+export function YouTube(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       role="img"

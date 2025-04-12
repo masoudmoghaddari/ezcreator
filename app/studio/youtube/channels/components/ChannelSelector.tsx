@@ -1,5 +1,6 @@
 // components/ChannelSelector.tsx
 
+import { YouTube } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,7 +10,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Channel } from "@/lib/types";
-import { Youtube, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface ChannelSelectorProps {
   channels: Channel[];
@@ -57,7 +58,7 @@ export function ChannelSelector({
             variant={channel.id === selectedChannelId ? "default" : "outline"}
             onClick={() => onSelectChannel(channel.id)}
           >
-            <Youtube className="w-4 h-4 mr-1" />
+            <YouTube className="w-4 h-4 mr-1" />
             {channel.title}
           </Button>
         ))}

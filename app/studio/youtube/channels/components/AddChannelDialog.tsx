@@ -8,11 +8,12 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Youtube, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/components/hooks/use-toast";
 import { Channel } from "@/lib/types";
+import { YouTube } from "@/components/icons";
 
 interface AddChannelDialogProps {
   open: boolean;
@@ -128,7 +129,7 @@ export default function AddChannelDialog({
             {mutation.isPending ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
             ) : (
-              <Youtube className="w-4 h-4 mr-2" />
+              <YouTube className="w-4 h-4 mr-2" />
             )}
             Add
           </Button>

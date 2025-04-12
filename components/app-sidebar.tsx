@@ -12,8 +12,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { AppLogo } from "./app-logo";
-import YouTube from "./icons/youtube";
-import { Lightbulb } from "lucide-react";
+import { YouTube, Tiktok } from "./icons";
 import { useUser } from "@clerk/nextjs";
 
 const data = {
@@ -31,6 +30,22 @@ const data = {
         {
           title: "Ideas",
           url: "/studio/youtube/ideas",
+        },
+      ],
+    },
+    {
+      title: "Tiktok",
+      url: "",
+      icon: Tiktok,
+      isActive: true,
+      items: [
+        {
+          title: "Profile",
+          url: "/studio/tiktok/profile",
+        },
+        {
+          title: "Ideas",
+          url: "/studio/tiktok/ideas",
         },
       ],
     },
