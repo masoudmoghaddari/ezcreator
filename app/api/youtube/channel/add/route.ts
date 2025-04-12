@@ -4,8 +4,8 @@ import {
   fetchLatestVideoIds,
   fetchVideoDetails,
   parseDuration,
-} from "../common/fetchVideos";
-import { getLocalUserId } from "../common/getLocalUserId";
+} from "../../common/fetchVideos";
+import { getLocalUserId } from "../../common/getLocalUserId";
 import { extractIdentifier } from "./extractIdentifier";
 
 const API_KEY = process.env.YOUTUBE_API_KEY!;
@@ -72,21 +72,45 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Fetch and store latest videos
-    const videoIds = await fetchLatestVideoIds(channelId, 30); // switch to 30 in prod
+    // Fetch last 200 and store top 50 by engagement
+    const videoIds = await fetchLatestVideoIds(
+      channelId,
+      parseInt(process.env.NUMBER_OF_VIDEOS_TO_FETCH || "200")
+    );
     const videos = await fetchVideoDetails(videoIds);
 
-    const videoEntries = videos.map((v: any) => ({
-      video_id: v.id,
-      title: v.snippet.title.trim(),
-      description: v.snippet.description,
-      thumbnail_url: v.snippet.thumbnails?.default?.url || null,
-      duration: parseDuration(v.contentDetails.duration),
-      view_count: parseInt(v.statistics.viewCount || "0"),
-      like_count: parseInt(v.statistics.likeCount || "0"),
-      tags: v.snippet.tags?.join(",") || null,
-      comment_count: parseInt(v.statistics.commentCount || "0"),
-      published_at: new Date(v.snippet.publishedAt),
+    // Add engagement score
+    const scoredVideos = videos.map((v: any) => {
+      const viewCount = parseInt(v.statistics.viewCount || "0");
+      const likeCount = parseInt(v.statistics.likeCount || "0");
+      const commentCount = parseInt(v.statistics.commentCount || "0");
+
+      const engagementScore =
+        viewCount * 0.6 + likeCount * 0.3 + commentCount * 0.1;
+
+      return {
+        raw: v,
+        engagementScore,
+      };
+    });
+
+    // Sort and pick top 50
+    const topVideos = scoredVideos
+      .sort((a, b) => b.engagementScore - a.engagementScore)
+      .slice(0, parseInt(process.env.NUMBER_OF_TOP_VIDEOS_TO_STORE || "50"));
+
+    // Prepare for DB
+    const videoEntries = topVideos.map(({ raw }) => ({
+      video_id: raw.id,
+      title: raw.snippet.title.trim(),
+      description: raw.snippet.description,
+      thumbnail_url: raw.snippet.thumbnails?.default?.url || null,
+      duration: parseDuration(raw.contentDetails.duration),
+      view_count: parseInt(raw.statistics.viewCount || "0"),
+      like_count: parseInt(raw.statistics.likeCount || "0"),
+      tags: raw.snippet.tags?.join(",") || null,
+      comment_count: parseInt(raw.statistics.commentCount || "0"),
+      published_at: new Date(raw.snippet.publishedAt),
       channel_id: savedChannel.id,
       user_id: localUser.id,
     }));

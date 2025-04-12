@@ -14,6 +14,7 @@ import { Channel, Idea, SortBy, SortOrder } from "@/lib/types";
 import { Spinner } from "@/components/ui/spinner";
 import { useSyncChannel } from "@/lib/hooks/use-sync-channel";
 import { useGenerateIdeas } from "@/lib/hooks/use-generate-ideas";
+import { sortVideos } from "@/app/api/youtube/common/sortVideos";
 
 export default function YoutubeStudioPage() {
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(
@@ -25,11 +26,6 @@ export default function YoutubeStudioPage() {
   const [ideas, setIdeas] = useState<Idea[]>([]);
 
   const ideasSectionRef = useRef<HTMLDivElement | null>(null);
-
-  // const { mutate: generateIdeas, isPending: isGenerating } = useGenerateIdeas(
-  //   selectedChannelId ?? null,
-  //   setIdeas
-  // );
 
   const { mutate: generateIdeas, isPending: isGenerating } = useGenerateIdeas({
     channelId: selectedChannelId ?? null,
@@ -69,41 +65,7 @@ export default function YoutubeStudioPage() {
     }
   }, [channels, selectedChannelId]);
 
-  const sortedVideos = [...videos].sort((a, b) => {
-    if (sortBy === "title") {
-      return sortOrder === "asc"
-        ? a.title.localeCompare(b.title)
-        : b.title.localeCompare(a.title);
-    }
-
-    const keyMap = {
-      views: "view_count",
-      likes: "like_count",
-      comments: "comment_count",
-      duration: "duration",
-      published_at: "published_at",
-      engagement_score: "engagement_score",
-    } as const;
-
-    const key = keyMap[sortBy as keyof typeof keyMap];
-
-    if (key) {
-      const aVal = a[key] ?? 0;
-      const bVal = b[key] ?? 0;
-
-      if (key === "published_at") {
-        return sortOrder === "asc"
-          ? new Date(aVal).getTime() - new Date(bVal).getTime()
-          : new Date(bVal).getTime() - new Date(aVal).getTime();
-      }
-
-      return sortOrder === "asc"
-        ? (aVal as number) - (bVal as number)
-        : (bVal as number) - (aVal as number);
-    }
-
-    return 0;
-  });
+  const sortedVideos = sortVideos(videos, sortBy, sortOrder);
 
   const handleAddChannel = (channel: Channel) => {
     setSelectedChannelId(channel.id);
@@ -188,7 +150,9 @@ export default function YoutubeStudioPage() {
             <Button
               size="lg"
               disabled={!selectedChannel || isGenerating}
-              onClick={() => generateIdeas(sortedVideos)}
+              onClick={() =>
+                generateIdeas(sortVideos(videos, "engagement_score", "desc"))
+              }
             >
               {isGenerating ? (
                 <Spinner className="w-4 h-4 mr-2" />

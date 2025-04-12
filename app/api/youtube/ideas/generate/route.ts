@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import { generatePromptFromTopVideos } from "../common/prompts";
+import { generatePromptFromTopVideos } from "../../common/prompts";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

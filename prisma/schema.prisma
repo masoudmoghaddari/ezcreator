@@ -63,7 +63,7 @@ model YoutubeChannel {
 model YoutubeVideo {
   id            String   @id @default(cuid())
   channel_id    String
-  video_id      String   @unique
+  video_id      String
   title         String
   description   String?
   thumbnail_url String?
@@ -80,6 +80,8 @@ model YoutubeVideo {
   user          User            @relation(fields: [user_id], references: [id])
   channel       YoutubeChannel  @relation(fields: [channel_id], references: [id])
   GeneratedIdea GeneratedIdea[]
+
+  @@unique([user_id, channel_id, video_id])
 }
 
 enum PlatformType {

@@ -6,20 +6,51 @@ export async function fetchLatestVideoIds(
   channelId: string,
   max = 30
 ): Promise<string[]> {
-  const searchRes = await fetch(
-    `${SEARCH_URL}?key=${API_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=${max}&type=video`
-  );
-  const searchData = await searchRes.json();
-  return searchData.items?.map((v: any) => v.id.videoId).filter(Boolean) || [];
+  let videoIds: string[] = [];
+  let nextPageToken: string | undefined = undefined;
+
+  while (videoIds.length < max) {
+    const remaining = max - videoIds.length;
+    const fetchCount = remaining > 50 ? 50 : remaining;
+
+    const url = new URL(SEARCH_URL);
+    url.searchParams.set("key", API_KEY);
+    url.searchParams.set("channelId", channelId);
+    url.searchParams.set("part", "snippet,id");
+    url.searchParams.set("order", "date");
+    url.searchParams.set("maxResults", fetchCount.toString());
+    url.searchParams.set("type", "video");
+    if (nextPageToken) url.searchParams.set("pageToken", nextPageToken);
+
+    const res = await fetch(url.toString());
+    const data = await res.json();
+
+    const ids =
+      data.items?.map((v: any) => v.id?.videoId).filter(Boolean) || [];
+    videoIds.push(...ids);
+
+    nextPageToken = data.nextPageToken;
+    if (!nextPageToken) break;
+  }
+
+  return videoIds.slice(0, max);
 }
 
 export async function fetchVideoDetails(videoIds: string[]): Promise<any[]> {
-  const idString = videoIds.join(",");
-  const res = await fetch(
-    `${VIDEOS_URL}?part=snippet,statistics,contentDetails&id=${idString}&key=${API_KEY}`
-  );
-  const data = await res.json();
-  return data.items || [];
+  const results: any[] = [];
+
+  for (let i = 0; i < videoIds.length; i += 50) {
+    const chunk = videoIds.slice(i, i + 50);
+    const idString = chunk.join(",");
+
+    const res = await fetch(
+      `${VIDEOS_URL}?part=snippet,statistics,contentDetails&id=${idString}&key=${API_KEY}`
+    );
+    const data = await res.json();
+    results.push(...(data.items || []));
+  }
+
+  return results;
 }
 
 export function parseDuration(iso: string): number {

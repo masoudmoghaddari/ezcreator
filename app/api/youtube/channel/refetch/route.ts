@@ -1,12 +1,11 @@
 import { prisma } from "@/utils/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { currentUser } from "@clerk/nextjs/server";
 import {
   fetchLatestVideoIds,
   fetchVideoDetails,
   parseDuration,
-} from "../common/fetchVideos";
-import { getLocalUserId } from "../common/getLocalUserId";
+} from "../../common/fetchVideos";
+import { getLocalUserId } from "../../common/getLocalUserId";
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,7 +34,13 @@ export async function POST(req: NextRequest) {
 
     for (const v of videos) {
       const existing = await prisma.youtubeVideo.findUnique({
-        where: { video_id: v.id },
+        where: {
+          user_id_channel_id_video_id: {
+            video_id: v.id,
+            channel_id: channel.id,
+            user_id: localUser.id,
+          },
+        },
       });
 
       const videoData = {
@@ -58,7 +63,13 @@ export async function POST(req: NextRequest) {
         added++;
       } else {
         await prisma.youtubeVideo.update({
-          where: { video_id: v.id },
+          where: {
+            user_id_channel_id_video_id: {
+              video_id: v.id,
+              channel_id: channel.id,
+              user_id: localUser.id,
+            },
+          },
           data: {
             view_count: videoData.view_count,
             like_count: videoData.like_count,

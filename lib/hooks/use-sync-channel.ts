@@ -6,7 +6,7 @@ export function useSyncChannel() {
 
   return useMutation({
     mutationFn: async (channelDbId: string) => {
-      const res = await fetch("/api/youtube/refetch", {
+      const res = await fetch("/api/youtube/channel/refetch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ channelDbId }),

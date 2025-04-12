@@ -1,26 +1,18 @@
-// app/api/youtube/my-channels/route.ts
-
 import { NextResponse } from "next/server";
-import { currentUser } from "@clerk/nextjs/server";
 import { prisma } from "@/utils/prisma";
+import { getLocalUserId } from "../../common/getLocalUserId";
 
 export async function GET() {
   try {
-    const localUser = await currentUser();
-    if (!localUser) {
+    const localUser = await getLocalUserId();
+    if (localUser.unauthorized) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const dbUser = await prisma.user.findUnique({
-      where: { id: localUser.id },
-    });
-
-    if (!dbUser) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    console.log("Fetching channels for user: " + localUser.id);
 
     const channels = await prisma.youtubeChannel.findMany({
-      where: { user_id: dbUser.id },
+      where: { user_id: localUser.id },
       orderBy: { created_at: "desc" },
       select: {
         id: true,

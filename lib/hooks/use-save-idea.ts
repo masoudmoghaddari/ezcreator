@@ -1,5 +1,3 @@
-// lib/hooks/use-save-idea.ts
-
 import { useMutation } from "@tanstack/react-query";
 
 export function useSaveIdea() {

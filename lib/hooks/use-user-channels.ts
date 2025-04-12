@@ -12,7 +12,7 @@ export function useUserChannels() {
   return useQuery<Channel[]>({
     queryKey: ["userChannels"],
     queryFn: async () => {
-      const res = await fetch("/api/youtube/my-channels");
+      const res = await fetch("/api/youtube/channel/my-channels");
       if (!res.ok) throw new Error("Failed to load channels");
       const data = (await res.json()) as UserChannel[];
       return data.map((channel) => ({

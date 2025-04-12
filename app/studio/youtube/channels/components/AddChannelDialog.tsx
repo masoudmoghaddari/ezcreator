@@ -21,7 +21,7 @@ interface AddChannelDialogProps {
 }
 
 async function fetchChannelPreview(url: string) {
-  const res = await fetch("/api/youtube/channel-preview", {
+  const res = await fetch("/api/youtube/channel/preview", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ url }),
@@ -35,7 +35,7 @@ async function fetchChannelPreview(url: string) {
 }
 
 async function addChannelToDB(url: string): Promise<Channel> {
-  const res = await fetch("/api/youtube/add-channel", {
+  const res = await fetch("/api/youtube/channel/add", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ url }),

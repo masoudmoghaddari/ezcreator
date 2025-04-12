@@ -26,18 +26,13 @@ const data = {
       items: [
         {
           title: "Channels",
-          url: "/studio/youtube",
+          url: "/studio/youtube/channels",
         },
         {
-          title: "Generate ideas",
-          url: "#",
+          title: "Ideas",
+          url: "/studio/youtube/ideas",
         },
       ],
-    },
-    {
-      title: "My ideas",
-      url: "",
-      icon: Lightbulb,
     },
   ],
 };

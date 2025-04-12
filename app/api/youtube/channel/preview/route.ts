@@ -1,5 +1,3 @@
-// app/api/youtube/preview/route.ts
-
 import { NextRequest, NextResponse } from "next/server";
 
 const API_KEY = process.env.YOUTUBE_API_KEY;
