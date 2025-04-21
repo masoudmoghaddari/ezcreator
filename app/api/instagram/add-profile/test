@@ -1,0 +1,45 @@
+import { NextResponse } from "next/server";
+import { type NextRequest } from "next/server";
+
+export async function POST(request: NextRequest) {
+  try {
+    const { username } = await request.json();
+
+    if (!username || typeof username !== "string") {
+      return NextResponse.json(
+        { error: "Username is required and must be a string" },
+        { status: 400 }
+      );
+    }
+
+    const apiUrl = `https://www.instagram.com/api/v1/users/web_profile_info/?username=${encodeURIComponent(username)}`;
+    const response = await fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "User-Agent":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "X-IG-App-ID": "936619743392459",
+        Referer: "https://www.instagram.com/",
+      },
+    });
+
+    console.log("Instagram API response status:", response.status);
+
+    if (response.ok) {
+      return NextResponse.json({ exists: true });
+    } else if (response.status === 404) {
+      return NextResponse.json({ exists: false });
+    } else {
+      return NextResponse.json(
+        { error: "Instagram API returned an unexpected status" },
+        { status: 502 } // Bad Gateway
+      );
+    }
+  } catch (error) {
+    console.error("POST /api/instagram/check failed:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

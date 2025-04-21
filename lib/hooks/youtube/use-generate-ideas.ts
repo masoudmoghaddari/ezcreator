@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/components/hooks/use-toast";
 import { VideoItem } from "@/app/studio/youtube/channels/components/VideoTable";
-import { Idea } from "../types";
+import { Idea } from "@/lib/types";
 
 interface Args {
   channelId: string | null;

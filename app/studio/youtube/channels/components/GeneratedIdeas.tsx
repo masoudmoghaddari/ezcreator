@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { RefreshCw, CopyCheck, Save, Check } from "lucide-react";
 import { Idea } from "@/lib/types";
 import { useToast } from "@/components/hooks/use-toast";
-import { useSaveIdea } from "@/lib/hooks/use-save-idea";
+import { useSaveIdea } from "@/lib/hooks/common/use-save-idea";
 import { useState } from "react";
 
 interface GeneratedIdeasProps {

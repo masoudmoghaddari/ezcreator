@@ -20,12 +20,12 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 import { useState } from "react";
-import { VideoItem } from "@/lib/types";
+import { InstagramProfileVideo } from "@/lib/types";
 
 const VIDEOS_PER_PAGE = 10;
 
 interface VideoTableProps {
-  videos: VideoItem[];
+  videos: InstagramProfileVideo[];
   isLoading: boolean;
   isError: boolean;
 }
@@ -33,6 +33,10 @@ interface VideoTableProps {
 export function VideoTable({ videos, isLoading, isError }: VideoTableProps) {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
+  const [expandedCaptions, setExpandedCaptions] = useState<
+    Record<string, boolean>
+  >({});
+
   const totalPages = Math.ceil(videos.length / VIDEOS_PER_PAGE);
   const start = (currentPage - 1) * VIDEOS_PER_PAGE;
   const end = start + itemsPerPage;
@@ -69,8 +73,7 @@ export function VideoTable({ videos, isLoading, isError }: VideoTableProps) {
         <Table className="min-w-[900px]">
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center">Thumbnail</TableHead>
-              <TableHead>Title</TableHead>
+              <TableHead>Caption</TableHead>
               <TableHead className="text-center">Views</TableHead>
               <TableHead className="text-center">Likes</TableHead>
               <TableHead className="text-center">Comments</TableHead>
@@ -84,21 +87,40 @@ export function VideoTable({ videos, isLoading, isError }: VideoTableProps) {
           <TableBody>
             {paginatedVideos.map((video) => (
               <TableRow key={video.id}>
-                <TableCell className="text-center">
-                  <img
-                    src={video.thumbnail_url || ""}
-                    alt="thumbnail"
-                    className="w-12 h-auto rounded mx-auto"
-                  />
-                </TableCell>
-                <TableCell className="flex items-center gap-2">
-                  {video.title}
-                  {video.topPick && (
+                <TableCell className="max-w-[300px] text-sm text-muted-foreground">
+                  <div className="flex flex-col">
+                    <span
+                      className={
+                        video.caption &&
+                        video.caption.length > 120 &&
+                        !expandedCaptions[video.id]
+                          ? "line-clamp-2"
+                          : ""
+                      }
+                    >
+                      {video.caption}
+                    </span>
+                    {video.caption && video.caption.length > 120 && (
+                      <button
+                        onClick={() =>
+                          setExpandedCaptions((prev) => ({
+                            ...prev,
+                            [video.id]: !prev[video.id],
+                          }))
+                        }
+                        className="text-xs text-primary mt-1 self-start"
+                      >
+                        {expandedCaptions[video.id] ? "Show less" : "View more"}
+                      </button>
+                    )}
+                    {/* {video.topPick && (
                     <Badge variant="secondary" className="border">
                       Top Pick
                     </Badge>
-                  )}
+                  )} */}
+                  </div>
                 </TableCell>
+
                 <TableCell className="text-center">
                   {video.view_count > 1000
                     ? `${(video.view_count / 1000).toFixed(0)}K`
@@ -115,10 +137,10 @@ export function VideoTable({ videos, isLoading, isError }: VideoTableProps) {
                     : video.comment_count}
                 </TableCell>
                 <TableCell className="text-center">
-                  {formatDuration(video.duration)}
+                  {formatDuration(parseInt(video.duration.toString(), 10))}
                 </TableCell>
                 <TableCell className="text-center">
-                  {formatDateToYMD(video.published_at)}
+                  {formatDateToYMD(video.timestamp)}
                 </TableCell>
                 <TableCell className="text-center">
                   <Button size="sm" variant="outline">

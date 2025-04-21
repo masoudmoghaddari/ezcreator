@@ -12,7 +12,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { AppLogo } from "./app-logo";
-import { YouTube, Tiktok } from "./icons";
+import { YouTube, Tiktok, Instagram } from "./icons";
 import { useUser } from "@clerk/nextjs";
 
 const data = {
@@ -30,6 +30,22 @@ const data = {
         {
           title: "Ideas",
           url: "/studio/youtube/ideas",
+        },
+      ],
+    },
+    {
+      title: "Instagram",
+      url: "",
+      icon: Instagram,
+      isActive: true,
+      items: [
+        {
+          title: "Profile",
+          url: "/studio/instagram/profile",
+        },
+        {
+          title: "Ideas",
+          url: "/studio/instagram/ideas",
         },
       ],
     },

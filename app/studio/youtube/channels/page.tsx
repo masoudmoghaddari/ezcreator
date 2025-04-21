@@ -8,13 +8,13 @@ import ChannelOverview from "./components/ChannelOverview";
 import GeneratedIdeas from "./components/GeneratedIdeas";
 import { VideoTable } from "./components/VideoTable";
 import { Button } from "@/components/ui/button";
-import { useUserChannels } from "@/lib/hooks/use-user-channels";
-import { useChannelVideos } from "@/lib/hooks/use-channel-videos";
+import { useUserChannels } from "@/lib/hooks/youtube/use-user-channels";
+import { useChannelVideos } from "@/lib/hooks/youtube/use-channel-videos";
 import { Channel, Idea, SortBy, SortOrder } from "@/lib/types";
 import { Spinner } from "@/components/ui/spinner";
-import { useSyncChannel } from "@/lib/hooks/use-sync-channel";
-import { useGenerateIdeas } from "@/lib/hooks/use-generate-ideas";
-import { sortVideos } from "@/app/api/youtube/common/sortVideos";
+import { useSyncChannel } from "@/lib/hooks/youtube/use-sync-channel";
+import { useGenerateIdeas } from "@/lib/hooks/youtube/use-generate-ideas";
+import { sortYoutubeVideos } from "@/app/api/youtube/common/sortVideos";
 import { YouTube } from "@/components/icons";
 
 export default function YoutubeStudioPage() {
@@ -66,7 +66,7 @@ export default function YoutubeStudioPage() {
     }
   }, [channels, selectedChannelId]);
 
-  const sortedVideos = sortVideos(videos, sortBy, sortOrder);
+  const sortedVideos = sortYoutubeVideos(videos, sortBy, sortOrder);
 
   const handleAddChannel = (channel: Channel) => {
     setSelectedChannelId(channel.id);
@@ -152,7 +152,9 @@ export default function YoutubeStudioPage() {
               size="lg"
               disabled={!selectedChannel || isGenerating}
               onClick={() =>
-                generateIdeas(sortVideos(videos, "engagement_score", "desc"))
+                generateIdeas(
+                  sortYoutubeVideos(videos, "engagement_score", "desc")
+                )
               }
             >
               {isGenerating ? (

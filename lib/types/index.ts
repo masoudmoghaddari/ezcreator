@@ -1,22 +1,4 @@
-export type SortBy =
-  | "views"
-  | "likes"
-  | "comments"
-  | "title"
-  | "duration"
-  | "published_at"
-  | "engagement_score";
-
-export type SortOrder = "asc" | "desc";
-
-export type Channel = {
-  id: string;
-  title: string;
-  avatarUrl: string;
-  syncedAt: Date;
-};
-
-export type Idea = {
-  title: string;
-  description: string;
-};
+export * from "./common";
+export * from "./youtube";
+export * from "./instagram";
+export * from "./idea";

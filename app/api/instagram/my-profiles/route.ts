@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
-import { getLocalUserId } from "../../common/getLocalUserId";
+import { getLocalUserId } from "../../youtube/common/getLocalUserId";
 
 export async function GET() {
   try {
@@ -9,13 +9,12 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const channels = await prisma.youtubeChannel.findMany({
+    const channels = await prisma.instagramProfile.findMany({
       where: { user_id: localUser.id },
       orderBy: { created_at: "desc" },
       select: {
         id: true,
-        title: true,
-        avatar_url: true,
+        username: true,
         synced_at: true,
       },
     });

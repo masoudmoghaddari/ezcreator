@@ -32,12 +32,14 @@ model User {
   plan             Plan      @default(FREE)
   subscriptionDate DateTime?
 
-  created_at      DateTime         @default(now())
-  updated_at      DateTime         @updatedAt
-  deleted_at      DateTime?
-  youtubeChannels YoutubeChannel[]
-  YoutubeVideo    YoutubeVideo[]
-  GeneratedIdea   GeneratedIdea[]
+  created_at       DateTime           @default(now())
+  updated_at       DateTime           @updatedAt
+  deleted_at       DateTime?
+  youtubeChannels  YoutubeChannel[]
+  YoutubeVideo     YoutubeVideo[]
+  GeneratedIdea    GeneratedIdea[]
+  TikTokProfile    TikTokProfile[]
+  InstagramProfile InstagramProfile[]
 
   @@index([external_id])
 }
@@ -84,6 +86,21 @@ model YoutubeVideo {
   @@unique([user_id, channel_id, video_id])
 }
 
+model TikTokProfile {
+  id           String  @id @default(cuid())
+  user_id      String
+  username     String
+  tiktok_id    String  @unique
+  access_token String
+  avatar_url   String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
 enum PlatformType {
   YOUTUBE
   TIKTOK
@@ -102,8 +119,48 @@ model GeneratedIdea {
   created_at  DateTime     @default(now())
   updated_at  DateTime     @updatedAt
 
-  user           User            @relation(fields: [user_id], references: [id])
+  user             User              @relation(fields: [user_id], references: [id])
   // Relations (optional, only if sticking to Prisma relations per platform)
-  youtubeChannel YoutubeChannel? @relation(fields: [source_id], references: [id])
-  youtubeVideo   YoutubeVideo?   @relation(fields: [context_id], references: [id])
+  youtubeChannel   YoutubeChannel?   @relation(fields: [source_id], references: [id], map: "channel_id")
+  instagramProfile InstagramProfile? @relation(fields: [source_id], references: [id], map: "profile_id")
+
+  youtubeVideo   YoutubeVideo?   @relation(fields: [context_id], references: [id], map: "fk_youtube_video")
+  instagramVideo InstagramVideo? @relation(fields: [context_id], references: [id], map: "fk_instagram_video")
+}
+
+model InstagramProfile {
+  id         String   @id @default(cuid())
+  user_id    String
+  username   String
+  synced_at  DateTime @default(now())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user          User             @relation(fields: [user_id], references: [id])
+  videos        InstagramVideo[]
+  GeneratedIdea GeneratedIdea[]
+
+  @@unique([user_id, username])
+  @@index([user_id])
+}
+
+model InstagramVideo {
+  id            String    @id @default(cuid())
+  profile_id    String
+  media_id      String    @unique
+  media_url     String
+  shortcode     String
+  caption       String?
+  hashtags      String?
+  thumbnail_url String?
+  timestamp     DateTime?
+  like_count    Int?
+  comment_count Int?
+  view_count    Int?
+  duration      Float?
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  profile       InstagramProfile @relation(fields: [profile_id], references: [id])
+  GeneratedIdea GeneratedIdea[]
 }

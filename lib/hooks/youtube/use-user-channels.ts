@@ -1,12 +1,5 @@
+import { Channel, UserChannel } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
-import { Channel } from "../types";
-
-export interface UserChannel {
-  id: string;
-  title: string;
-  avatar_url: string;
-  synced_at: string;
-}
 
 export function useUserChannels() {
   return useQuery<Channel[]>({
