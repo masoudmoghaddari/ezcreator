@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useToast } from "@/components/hooks/use-toast";
-import { VideoItem } from "@/app/studio/youtube/channels/components/VideoTable";
-import { Idea } from "@/lib/types";
+import { Idea, YoutubeVideoItem } from "@/lib/types";
 
 interface Args {
   channelId: string | null;
@@ -12,8 +11,8 @@ export function useGenerateIdeas({ channelId, onSuccess }: Args) {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (videos: VideoItem[]) => {
-      const res = await fetch("/api/youtube/ideas/generate", {
+    mutationFn: async (videos: YoutubeVideoItem[]) => {
+      const res = await fetch("/api/ideas/generate/youtube", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -21,7 +20,7 @@ export function useGenerateIdeas({ channelId, onSuccess }: Args) {
           videos: videos.slice(
             0,
             parseInt(
-              process.env.NUMBER_OF_TOP_VIDEOS_TO_SELECT_FOR_IDEA_GENERATION ||
+              process.env.NUMBER_OF_YOUTUBE_TOP_VIDEOS_FOR_IDEA_GENERATION ||
                 "5"
             )
           ), // Top 5 videos

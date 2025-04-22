@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
+import { YoutubeVideoItem } from "@/lib/types";
 
 export async function GET(req: NextRequest) {
   const channelId = req.nextUrl.searchParams.get("channelId");
@@ -24,13 +25,15 @@ export async function GET(req: NextRequest) {
     },
   });
 
-  const videosWithScore = [...videos].map((v) => ({
+  const videosWithScore: YoutubeVideoItem[] = [...videos].map((v) => ({
     ...v,
-    engagement_score: (
-      (v.view_count ?? 0) * 0.6 +
-      (v.like_count ?? 0) * 0.3 +
-      (v.comment_count ?? 0) * 0.1
-    ).toFixed(2),
+    engagement_score: parseFloat(
+      (
+        (v.view_count ?? 0) * 0.6 +
+        (v.like_count ?? 0) * 0.3 +
+        (v.comment_count ?? 0) * 0.1
+      ).toFixed(2)
+    ),
   }));
 
   return NextResponse.json(videosWithScore);

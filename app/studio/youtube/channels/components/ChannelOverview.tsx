@@ -12,11 +12,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { timeAgo } from "@/lib/utils/date";
-import { Channel, SortBy, SortOrder } from "@/lib/types";
+import { YoutubeChannel, SortBy, SortOrder } from "@/lib/types";
 import { useToast } from "@/components/hooks/use-toast";
 
 interface ChannelOverviewProps {
-  selectedChannel: Channel;
+  selectedChannel: YoutubeChannel;
   sortBy: SortBy;
   sortOrder: SortOrder;
   onSortByChange: (value: SortBy) => void;

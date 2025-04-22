@@ -10,7 +10,7 @@ import { VideoTable } from "./components/VideoTable";
 import { Button } from "@/components/ui/button";
 import { useUserChannels } from "@/lib/hooks/youtube/use-user-channels";
 import { useChannelVideos } from "@/lib/hooks/youtube/use-channel-videos";
-import { Channel, Idea, SortBy, SortOrder } from "@/lib/types";
+import { YoutubeChannel, Idea, SortBy, SortOrder } from "@/lib/types";
 import { Spinner } from "@/components/ui/spinner";
 import { useSyncChannel } from "@/lib/hooks/youtube/use-sync-channel";
 import { useGenerateIdeas } from "@/lib/hooks/youtube/use-generate-ideas";
@@ -68,7 +68,7 @@ export default function YoutubeStudioPage() {
 
   const sortedVideos = sortYoutubeVideos(videos, sortBy, sortOrder);
 
-  const handleAddChannel = (channel: Channel) => {
+  const handleAddChannel = (channel: YoutubeChannel) => {
     setSelectedChannelId(channel.id);
     refetchChannels();
   };

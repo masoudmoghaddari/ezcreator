@@ -20,12 +20,12 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 import { useState } from "react";
-import { VideoItem } from "@/lib/types";
+import { YoutubeVideoItem } from "@/lib/types";
 
 const VIDEOS_PER_PAGE = 10;
 
 interface VideoTableProps {
-  videos: VideoItem[];
+  videos: YoutubeVideoItem[];
   isLoading: boolean;
   isError: boolean;
 }
@@ -100,17 +100,17 @@ export function VideoTable({ videos, isLoading, isError }: VideoTableProps) {
                   )}
                 </TableCell>
                 <TableCell className="text-center">
-                  {video.view_count > 1000
+                  {video.view_count && video.view_count > 1000
                     ? `${(video.view_count / 1000).toFixed(0)}K`
                     : video.view_count}
                 </TableCell>
                 <TableCell className="text-center">
-                  {video.like_count > 1000
+                  {video.like_count && video.like_count > 1000
                     ? `${(video.like_count / 1000).toFixed(0)}K`
                     : video.like_count}
                 </TableCell>
                 <TableCell className="text-center">
-                  {video.comment_count > 1000
+                  {video.comment_count && video.comment_count > 1000
                     ? `${(video.comment_count / 1000).toFixed(0)}K`
                     : video.comment_count}
                 </TableCell>

@@ -9,11 +9,11 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { Channel } from "@/lib/types";
+import { YoutubeChannel } from "@/lib/types";
 import { Loader2 } from "lucide-react";
 
 interface ChannelSelectorProps {
-  channels: Channel[];
+  channels: YoutubeChannel[];
   isLoading: boolean;
   isError: boolean;
   selectedChannelId: string | null;

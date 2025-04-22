@@ -6,17 +6,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
-
-type YoutubeIdea = {
-  id: string;
-  title: string;
-  description: string;
-  created_at: string;
-  source_id: string;
-  youtubeChannel: {
-    title: string;
-  };
-};
+import { YoutubeIdea } from "@/lib/types";
 
 export default function YoutubeIdeasPage() {
   const {
@@ -27,7 +17,7 @@ export default function YoutubeIdeasPage() {
   } = useQuery<YoutubeIdea[]>({
     queryKey: ["youtubeIdeas"],
     queryFn: async () => {
-      const res = await fetch("/api/youtube/ideas/list");
+      const res = await fetch("/api/ideas/list");
       if (!res.ok) throw new Error("Failed to load saved ideas");
       return res.json();
     },

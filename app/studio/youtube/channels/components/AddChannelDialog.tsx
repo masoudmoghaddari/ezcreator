@@ -12,13 +12,13 @@ import { Loader2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useToast } from "@/components/hooks/use-toast";
-import { Channel } from "@/lib/types";
+import { YoutubeChannel } from "@/lib/types";
 import { YouTube } from "@/components/icons";
 
 interface AddChannelDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onAddChannel: (channel: Channel) => void;
+  onAddChannel: (channel: YoutubeChannel) => void;
 }
 
 async function fetchChannelPreview(url: string) {
@@ -35,7 +35,7 @@ async function fetchChannelPreview(url: string) {
   return res.json();
 }
 
-async function addChannelToDB(url: string): Promise<Channel> {
+async function addChannelToDB(url: string): Promise<YoutubeChannel> {
   const res = await fetch("/api/youtube/channel/add", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

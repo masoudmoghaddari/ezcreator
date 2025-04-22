@@ -1,8 +1,8 @@
-import { ChannelVideo } from "@/lib/types";
+import { YoutubeVideoItem } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 
 export function useChannelVideos(channelId?: string) {
-  return useQuery<ChannelVideo[]>({
+  return useQuery<YoutubeVideoItem[]>({
     queryKey: ["channelVideos", channelId],
     queryFn: async () => {
       const res = await fetch(

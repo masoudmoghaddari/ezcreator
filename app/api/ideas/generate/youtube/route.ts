@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
-import { generatePromptFromTopVideos } from "../../common/prompts";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { generateYoutubePrompt } from "@/app/api/ideas/helpers/prompts";
+import { openai } from "@/utils/openai";
+import { YoutubeVideoItem } from "@/lib/types";
 
 export async function POST(req: NextRequest) {
   try {
-    const { videos } = await req.json();
+    const {
+      videos,
+    }: {
+      videos: YoutubeVideoItem[];
+    } = await req.json();
 
     if (!videos || !Array.isArray(videos) || videos.length === 0) {
       return NextResponse.json(
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const prompt = generatePromptFromTopVideos(videos);
+    const prompt = generateYoutubePrompt(videos);
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",

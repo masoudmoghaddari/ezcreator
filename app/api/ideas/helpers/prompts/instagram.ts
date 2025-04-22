@@ -1,7 +1,7 @@
-import { YoutubeVideo } from "@prisma/client";
+import { YoutubeVideoItem } from "@/lib/types";
 
-export function generatePromptFromTopVideos(videos: YoutubeVideo[]) {
-  const calculateScore = (video: YoutubeVideo) => {
+export function generateInstagramPrompt(videos: YoutubeVideoItem[]) {
+  const calculateScore = (video: YoutubeVideoItem) => {
     const views = video.view_count ?? 0;
     const likes = video.like_count ?? 0;
     const comments = video.comment_count ?? 0;
