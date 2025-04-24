@@ -19,25 +19,25 @@ export async function POST(req: NextRequest) {
     }
 
     const prompt = generateYoutubePrompt(videos);
-
+    console.log("Generated prompt:", prompt);
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
         {
           role: "system",
           content:
-            "You are a professional YouTube strategist. Help creators generate viral content ideas.",
+            "You are an expert YouTube content strategist and data analyst. Your job is to study video performance, understand audience behavior, detect content trends, and generate original, high-engagement content ideas that align with a channel’s niche and have strong viral potential. Prioritize creativity, niche relevance, and trend-awareness.",
         },
         {
           role: "user",
           content: prompt,
         },
       ],
-      temperature: 0.8,
+      temperature: 0.7,
     });
 
     const ideas = response.choices?.[0]?.message?.content || "";
-
+    console.log("ideas length:", ideas.length);
     return NextResponse.json({ ideas });
   } catch (error) {
     console.error("Idea generation error:", error);

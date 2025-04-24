@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-// import { generateInstagramPrompt } from "@/app/api/ideas/helpers/prompts";
+import { generateInstagramPrompt } from "@/app/api/ideas/helpers/prompts";
 import { openai } from "@/utils/openai";
 import { InstagramProfileVideo } from "@/lib/types";
 
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const prompt = "generateInstagramPrompt(videos)";
+    const prompt = generateInstagramPrompt(videos);
 
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",

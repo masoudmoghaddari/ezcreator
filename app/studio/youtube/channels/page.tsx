@@ -171,7 +171,10 @@ export default function YoutubeStudioPage() {
           </div>
           <div ref={ideasSectionRef}>
             {selectedChannelId && ideas.length > 0 && (
-              <GeneratedIdeas ideas={ideas} sourceId={selectedChannelId} />
+              <GeneratedIdeas
+                ideas={ideas}
+                youtubeChannelId={selectedChannelId}
+              />
             )}
           </div>
         </>

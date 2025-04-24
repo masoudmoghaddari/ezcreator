@@ -23,7 +23,7 @@ export interface YoutubeVideoItem {
   published_at: Date;
   duration: number | null;
   topPick?: boolean;
-  engagement_score?: number;
+  engagement_score: number;
 }
 
 export type YoutubeIdea = {
@@ -31,7 +31,6 @@ export type YoutubeIdea = {
   title: string;
   description: string;
   created_at: string;
-  source_id: string;
   youtubeChannel: {
     title: string;
   };

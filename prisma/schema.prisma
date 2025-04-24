@@ -109,23 +109,25 @@ enum PlatformType {
 }
 
 model GeneratedIdea {
-  id          String       @id @default(cuid())
-  source_id   String // e.g. channel_id, account_id, page_id etc.
-  context_id  String? // e.g. video_id, post_id, reel_id, etc.
-  title       String
-  description String
-  type        PlatformType @default(YOUTUBE)
-  user_id     String
-  created_at  DateTime     @default(now())
-  updated_at  DateTime     @updatedAt
+  id                   String       @id @default(cuid())
+  youtube_channel_id   String?
+  instagram_profile_id String?
+  title                String
+  description          String
+  type                 PlatformType @default(YOUTUBE)
+  user_id              String
+  created_at           DateTime     @default(now())
+  updated_at           DateTime     @updatedAt
 
-  user             User              @relation(fields: [user_id], references: [id])
-  // Relations (optional, only if sticking to Prisma relations per platform)
-  youtubeChannel   YoutubeChannel?   @relation(fields: [source_id], references: [id], map: "channel_id")
-  instagramProfile InstagramProfile? @relation(fields: [source_id], references: [id], map: "profile_id")
+  user User @relation(fields: [user_id], references: [id])
 
-  youtubeVideo   YoutubeVideo?   @relation(fields: [context_id], references: [id], map: "fk_youtube_video")
-  instagramVideo InstagramVideo? @relation(fields: [context_id], references: [id], map: "fk_instagram_video")
+  youtubeChannel   YoutubeChannel?   @relation(fields: [youtube_channel_id], references: [id])
+  instagramProfile InstagramProfile? @relation(fields: [instagram_profile_id], references: [id])
+
+  YoutubeVideo     YoutubeVideo?   @relation(fields: [youtubeVideoId], references: [id])
+  youtubeVideoId   String?
+  InstagramVideo   InstagramVideo? @relation(fields: [instagramVideoId], references: [id])
+  instagramVideoId String?
 }
 
 model InstagramProfile {

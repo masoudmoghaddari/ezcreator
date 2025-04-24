@@ -20,10 +20,10 @@ export function useGenerateIdeas({ channelId, onSuccess }: Args) {
           videos: videos.slice(
             0,
             parseInt(
-              process.env.NUMBER_OF_YOUTUBE_TOP_VIDEOS_FOR_IDEA_GENERATION ||
-                "5"
+              process.env
+                .NEXT_PUBLIC_NUMBER_OF_YOUTUBE_TOP_VIDEOS_FOR_IDEA_GENERATION!
             )
-          ), // Top 5 videos
+          ),
         }),
       });
 

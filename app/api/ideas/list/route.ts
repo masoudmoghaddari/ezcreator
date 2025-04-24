@@ -25,8 +25,8 @@ export async function GET(req: NextRequest) {
       description: true,
       created_at: true,
       type: true,
-      source_id: true,
-      context_id: true,
+      youtube_channel_id: true,
+      instagram_profile_id: true,
       youtubeChannel: {
         select: { title: true },
       },

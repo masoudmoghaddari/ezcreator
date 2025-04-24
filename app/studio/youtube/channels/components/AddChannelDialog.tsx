@@ -74,7 +74,6 @@ export default function AddChannelDialog({
   const mutation = useMutation({
     mutationFn: addChannelToDB,
     onSuccess: (data) => {
-      console.log("Channel added:", data);
       onAddChannel({
         id: data.id,
         title: data.title,

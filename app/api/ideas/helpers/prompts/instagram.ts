@@ -1,25 +1,18 @@
-import { YoutubeVideoItem } from "@/lib/types";
+import { InstagramProfileVideo } from "@/lib/types";
 
-export function generateInstagramPrompt(videos: YoutubeVideoItem[]) {
-  const calculateScore = (video: YoutubeVideoItem) => {
-    const views = video.view_count ?? 0;
-    const likes = video.like_count ?? 0;
-    const comments = video.comment_count ?? 0;
-    return views * 0.6 + likes * 0.3 + comments * 0.1;
-  };
-
+export function generateInstagramPrompt(videos: InstagramProfileVideo[]) {
   const topVideos = [...videos]
-    .map((v) => ({
-      ...v,
-      engagement_score: calculateScore(v),
-    }))
     .sort((a, b) => b.engagement_score - a.engagement_score)
     .slice(0, 10);
+
+  const videosCount =
+    process.env.NEXT_PUBLIC_NUMBER_OF_YOUTUBE_TOP_VIDEOS_FOR_IDEA_GENERATION;
+  const ideasCount = process.env.NUMBER_OF_IDEAS_TO_GENERATE;
 
   const videoLines = topVideos
     .map(
       (v, i) => `
-${i + 1}. "${v.title}"
+${i + 1}. "${v.caption}"
    - Views: ${v.view_count}
    - Likes: ${v.like_count}
    - Comments: ${v.comment_count}
@@ -29,12 +22,14 @@ ${i + 1}. "${v.title}"
 
   return `
 You are a YouTube content strategist.
+I will provide the ${videosCount} most engaging videos from a YouTube channel. 
+Based on all ${videosCount} videos, do the following:
+1. Analyze the channel's niche and audience.
+2. Identify themes, formats, and styles that aligns with the channel's niche with and resonates with the audience.
+3. Generate ${ideasCount} new, original and distinct content ideas that align with the channel's niche and have strong viral potential.
+4. Consider the current trends in social media and YouTube, and suggest ideas that have high engagement potential.
 
-I will provide the 10 most engaging videos from a YouTube channel. Based on all of these 5 videos, generate 10 new and original content ideas that align with the channel's niche and have strong viral potential. 
-Consider the current trends in social media and YouTube, and suggest ideas that are likely to resonate with the audience.
-Use this data to understand what performs well.
-
-Here are the top 5 videos:
+Here are the top ${videosCount} videos:
 ${videoLines}
 
 Engagement score is calculated as:

@@ -6,9 +6,8 @@ import { getLocalUserId } from "../../youtube/common/getLocalUserId";
 const ideaSchema = z.object({
   title: z.string(),
   description: z.string(),
-  source_id: z.string(),
-  context_id: z.string().optional(),
-  type: z.enum(["YOUTUBE"]),
+  youtube_channel_id: z.string().optional().nullable(),
+  instagram_profile_id: z.string().optional().nullable(),
 });
 
 export async function POST(req: NextRequest) {
@@ -20,6 +19,7 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
     const data = ideaSchema.parse(body);
+    console.log("Parsed Data:", data);
 
     const saved = await prisma.generatedIdea.create({
       data: {
