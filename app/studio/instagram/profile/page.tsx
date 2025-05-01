@@ -16,7 +16,7 @@ import { useGenerateIdeas } from "@/lib/hooks/common/use-generate-ideas";
 import { sortInstagramVideos } from "@/app/api/youtube/common/sortVideos";
 import { InstagramProfile, Idea, SortBy, SortOrder } from "@/lib/types";
 import { VideoTable } from "./components/VideoTable";
-// import GeneratedIdeas from "../../youtube/channels/components/GeneratedIdeas";
+import GeneratedIdeas from "../../youtube/channels/components/GeneratedIdeas";
 
 export default function InstagramStudioPage() {
   const [selectedProfileId, setSelectedProfileId] = useState<string | null>(
@@ -69,7 +69,8 @@ export default function InstagramStudioPage() {
 
   const handleAddProfile = (profile: InstagramProfile) => {
     setSelectedProfileId(profile.id);
-    refetchProfiles();
+    alert("test");
+    // refetchProfiles();
   };
 
   return (
@@ -89,7 +90,7 @@ export default function InstagramStudioPage() {
             Loading Instagram profiles...
           </h2>
           <p className="max-w-md mx-auto">
-            Hang tight while we fetch your Instagram profiles!
+            Hang tight while we fetch the Instagram profiles!
           </p>
           <Spinner />
         </div>
@@ -169,11 +170,14 @@ export default function InstagramStudioPage() {
             </p>
           </div>
 
-          {/* <div ref={ideasSectionRef}>
+          <div ref={ideasSectionRef}>
             {selectedProfileId && ideas.length > 0 && (
-              <GeneratedIdeas ideas={ideas} sourceId={selectedProfileId} />
+              <GeneratedIdeas
+                ideas={ideas}
+                instagramProfileId={selectedProfileId}
+              />
             )}
-          </div> */}
+          </div>
         </>
       )}
     </div>

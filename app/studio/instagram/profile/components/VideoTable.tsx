@@ -20,12 +20,12 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 import { useState } from "react";
-import { InstagramProfileVideo } from "@/lib/types";
+import { InstagramProfileVideoItem } from "@/lib/types";
 
 const VIDEOS_PER_PAGE = 10;
 
 interface VideoTableProps {
-  videos: InstagramProfileVideo[];
+  videos: InstagramProfileVideoItem[];
   isLoading: boolean;
   isError: boolean;
 }

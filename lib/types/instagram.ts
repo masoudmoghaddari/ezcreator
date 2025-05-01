@@ -5,7 +5,7 @@ export type InstagramProfile = {
   syncedAt: Date;
 };
 
-export type InstagramProfileVideo = {
+export type InstagramProfileVideoItem = {
   id: string;
   profile_id: string;
   caption: string;

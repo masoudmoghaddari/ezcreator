@@ -16,7 +16,7 @@ export function useGenerateIdeas({
     mutationFn: async (videos: any[]): Promise<Idea[]> => {
       if (!profileId) throw new Error("Missing profile ID");
 
-      const res = await fetch("/api/instagram/generate-ideas", {
+      const res = await fetch("/api/ideas/generate/instagram", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ videos, profileId }),

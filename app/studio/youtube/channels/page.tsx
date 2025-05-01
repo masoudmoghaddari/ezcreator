@@ -13,7 +13,7 @@ import { useChannelVideos } from "@/lib/hooks/youtube/use-channel-videos";
 import { YoutubeChannel, Idea, SortBy, SortOrder } from "@/lib/types";
 import { Spinner } from "@/components/ui/spinner";
 import { useSyncChannel } from "@/lib/hooks/youtube/use-sync-channel";
-import { useGenerateIdeas } from "@/lib/hooks/youtube/use-generate-ideas";
+import { useGenerateChannelIdeas } from "@/lib/hooks/youtube/use-generate-channel-ideas";
 import { sortYoutubeVideos } from "@/app/api/youtube/common/sortVideos";
 import { YouTube } from "@/components/icons";
 
@@ -28,12 +28,13 @@ export default function YoutubeStudioPage() {
 
   const ideasSectionRef = useRef<HTMLDivElement | null>(null);
 
-  const { mutate: generateIdeas, isPending: isGenerating } = useGenerateIdeas({
-    channelId: selectedChannelId ?? null,
-    onSuccess: (ideas) => {
-      setIdeas(ideas);
-    },
-  });
+  const { mutate: generateIdeas, isPending: isGenerating } =
+    useGenerateChannelIdeas({
+      channelId: selectedChannelId ?? null,
+      onSuccess: (ideas) => {
+        setIdeas(ideas);
+      },
+    });
 
   const {
     data: channels = [],
@@ -135,11 +136,15 @@ export default function YoutubeStudioPage() {
               resyncFunction={resyncChannel}
               resyncIsPending={resyncIsPending}
             >
-              <VideoTable
-                videos={sortedVideos}
-                isLoading={videosIsLoading}
-                isError={videosIsError}
-              />
+              {selectedChannel && (
+                <VideoTable
+                  channel={selectedChannel}
+                  videos={sortedVideos}
+                  isLoading={videosIsLoading}
+                  isError={videosIsError}
+                  onSingleIdeaGenerationSuccess={setIdeas}
+                />
+              )}
             </ChannelOverview>
           ) : (
             <div className="text-sm text-muted-foreground py-6">
@@ -152,9 +157,10 @@ export default function YoutubeStudioPage() {
               size="lg"
               disabled={!selectedChannel || isGenerating}
               onClick={() =>
-                generateIdeas(
-                  sortYoutubeVideos(videos, "engagement_score", "desc")
-                )
+                generateIdeas({
+                  videos: sortYoutubeVideos(videos, "engagement_score", "desc"),
+                  youtubeChannelName: selectedChannel?.title ?? "",
+                })
               }
             >
               {isGenerating ? (

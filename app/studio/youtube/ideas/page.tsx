@@ -67,21 +67,6 @@ export default function YoutubeIdeasPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {ideas.map((idea, i) => (
               <IdeaCard key={i} idea={idea} index={i} />
-
-              // <Card
-              //   key={idea.id}
-              //   className="hover:bg-muted transition-colors duration-200"
-              // >
-              //   <CardContent className="py-4 space-y-2">
-              //     <h3 className="font-semibold text-sm">{idea.title}</h3>
-              //     <p className="text-sm text-muted-foreground">
-              //       {idea.description}
-              //     </p>
-              //     <p className="text-xs text-muted-foreground">
-              //       Saved {formatDistanceToNow(new Date(idea.created_at))} ago
-              //     </p>
-              //   </CardContent>
-              // </Card>
             ))}
           </div>
         </div>

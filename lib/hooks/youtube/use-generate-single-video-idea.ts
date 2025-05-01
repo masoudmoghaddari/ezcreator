@@ -3,27 +3,27 @@ import { useToast } from "@/components/hooks/use-toast";
 import { Idea, YoutubeVideoItem } from "@/lib/types";
 
 interface Args {
-  channelId: string | null;
+  channelId: string;
   onSuccess: (ideas: Idea[]) => void;
 }
 
-export function useGenerateIdeas({ channelId, onSuccess }: Args) {
+interface MutationArgs {
+  video: YoutubeVideoItem;
+  youtubeChannelName: string | null;
+}
+
+export function useGenerateSingleVideoIdea({ channelId, onSuccess }: Args) {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (videos: YoutubeVideoItem[]) => {
-      const res = await fetch("/api/ideas/generate/youtube", {
+    mutationFn: async ({ video, youtubeChannelName }: MutationArgs) => {
+      const res = await fetch("/api/ideas/generate/youtube/single-video", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           channelId,
-          videos: videos.slice(
-            0,
-            parseInt(
-              process.env
-                .NEXT_PUBLIC_NUMBER_OF_YOUTUBE_TOP_VIDEOS_FOR_IDEA_GENERATION!
-            )
-          ),
+          youtubeChannelName,
+          video,
         }),
       });
 
@@ -49,7 +49,6 @@ export function useGenerateIdeas({ channelId, onSuccess }: Args) {
 
 function parseIdeasResponse(response: string): Idea[] {
   try {
-    // Strip code block markers like ```json and ```
     const cleaned = response
       .trim()
       .replace(/^```json\n?|```$/g, "")

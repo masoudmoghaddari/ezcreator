@@ -1,8 +1,8 @@
-import { InstagramProfileVideo } from "@/lib/types";
+import { InstagramProfileVideoItem } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 
 export function useInstagramVideos(profileId?: string | null) {
-  return useQuery<InstagramProfileVideo[]>({
+  return useQuery<InstagramProfileVideoItem[]>({
     queryKey: ["instagramVideos", profileId],
     enabled: !!profileId,
     queryFn: async () => {

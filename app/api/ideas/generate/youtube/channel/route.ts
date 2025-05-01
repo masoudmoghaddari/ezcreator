@@ -7,8 +7,12 @@ export async function POST(req: NextRequest) {
   try {
     const {
       videos,
+      channelId,
+      youtubeChannelName,
     }: {
       videos: YoutubeVideoItem[];
+      channelId: string | null;
+      youtubeChannelName: string | null;
     } = await req.json();
 
     if (!videos || !Array.isArray(videos) || videos.length === 0) {
@@ -18,8 +22,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const prompt = generateYoutubePrompt(videos);
-    console.log("Generated prompt:", prompt);
+    const prompt = generateYoutubePrompt(videos, youtubeChannelName);
+
     const response = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
@@ -37,10 +41,9 @@ export async function POST(req: NextRequest) {
     });
 
     const ideas = response.choices?.[0]?.message?.content || "";
-    console.log("ideas length:", ideas.length);
+
     return NextResponse.json({ ideas });
   } catch (error) {
-    console.error("Idea generation error:", error);
     return NextResponse.json(
       { error: "Failed to generate ideas." },
       { status: 500 }

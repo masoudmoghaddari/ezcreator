@@ -6,12 +6,14 @@ import { Idea } from "@/lib/types";
 
 interface GeneratedIdeasProps {
   ideas: Idea[];
-  youtubeChannelId: string;
+  youtubeChannelId?: string | null;
+  instagramProfileId?: string | null;
 }
 
 export default function GeneratedIdeas({
   ideas,
-  youtubeChannelId,
+  youtubeChannelId = null,
+  instagramProfileId = null,
 }: GeneratedIdeasProps) {
   if (!ideas || ideas.length === 0) return null;
   const { mutateAsync, isPending } = useSaveIdea();
@@ -29,7 +31,9 @@ export default function GeneratedIdeas({
               await mutateAsync({
                 title: idea.title,
                 description: idea.description,
-                youtube_channel_id: youtubeChannelId,
+                videoId: idea.inspiredBy,
+                youtubeChannelId,
+                instagramProfileId,
               })
             }
           />

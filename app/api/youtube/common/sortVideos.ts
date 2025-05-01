@@ -1,6 +1,6 @@
 import {
   YoutubeVideoItem,
-  InstagramProfileVideo,
+  InstagramProfileVideoItem,
   SortBy,
   SortOrder,
 } from "@/lib/types";
@@ -48,10 +48,10 @@ export const sortYoutubeVideos = (
 };
 
 export const sortInstagramVideos = (
-  videos: InstagramProfileVideo[],
+  videos: InstagramProfileVideoItem[],
   sortBy: SortBy,
   sortOrder: SortOrder
-): InstagramProfileVideo[] => {
+): InstagramProfileVideoItem[] => {
   return [...videos].sort((a, b) => {
     if (sortBy === "title") {
       return sortOrder === "asc"

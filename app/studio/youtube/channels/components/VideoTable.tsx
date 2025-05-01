@@ -20,23 +20,44 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination";
 import { useState } from "react";
-import { YoutubeVideoItem } from "@/lib/types";
+import { Idea, YoutubeChannel, YoutubeVideoItem } from "@/lib/types";
+import { useGenerateSingleVideoIdea } from "@/lib/hooks/youtube/use-generate-single-video-idea";
+import { Spinner } from "@/components/ui/spinner";
 
 const VIDEOS_PER_PAGE = 10;
 
 interface VideoTableProps {
   videos: YoutubeVideoItem[];
+  channel: YoutubeChannel;
   isLoading: boolean;
   isError: boolean;
+  onSingleIdeaGenerationSuccess: (ideas: Idea[]) => void;
 }
 
-export function VideoTable({ videos, isLoading, isError }: VideoTableProps) {
+export function VideoTable({
+  videos,
+  channel,
+  isLoading,
+  isError,
+  onSingleIdeaGenerationSuccess,
+}: VideoTableProps) {
   const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
+  const [generatingVideoId, setGeneratingVideoId] = useState<string | null>(
+    null
+  );
   const totalPages = Math.ceil(videos.length / VIDEOS_PER_PAGE);
   const start = (currentPage - 1) * VIDEOS_PER_PAGE;
   const end = start + itemsPerPage;
   const paginatedVideos = videos.slice(start, start + VIDEOS_PER_PAGE);
+
+  const { mutate: generateSingleVideoIdea, isPending: isGenerating } =
+    useGenerateSingleVideoIdea({
+      channelId: channel.id,
+      onSuccess: (ideas) => {
+        onSingleIdeaGenerationSuccess(ideas);
+      },
+    });
 
   if (isLoading) {
     return (
@@ -121,8 +142,29 @@ export function VideoTable({ videos, isLoading, isError }: VideoTableProps) {
                   {formatDateToYMD(video.published_at)}
                 </TableCell>
                 <TableCell className="text-center">
-                  <Button size="sm" variant="outline">
-                    <Sparkles className="w-3 h-3 mr-1" /> Inspire Me
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setGeneratingVideoId(video.id);
+                      generateSingleVideoIdea(
+                        {
+                          video,
+                          youtubeChannelName: channel.title,
+                        },
+                        {
+                          onSettled: () => setGeneratingVideoId(null),
+                        }
+                      );
+                    }}
+                    disabled={isGenerating}
+                  >
+                    {isGenerating && generatingVideoId === video.id ? (
+                      <Spinner className="w-3 h-3" />
+                    ) : (
+                      <Sparkles className="w-3 h-3" />
+                    )}
+                    Inspire Me
                   </Button>
                 </TableCell>
               </TableRow>

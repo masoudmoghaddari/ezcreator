@@ -18,6 +18,7 @@ export async function GET() {
           id: true,
           title: true,
           avatar_url: true,
+          channel_id: true,
           synced_at: true,
         },
       }

@@ -5,8 +5,9 @@ export function useSaveIdea() {
     mutationFn: async (idea: {
       title: string;
       description: string;
-      youtube_channel_id?: string;
-      instagram_profile_id?: string;
+      videoId: string;
+      youtubeChannelId: string | null;
+      instagramProfileId: string | null;
     }) => {
       const res = await fetch("/api/ideas/save", {
         method: "POST",

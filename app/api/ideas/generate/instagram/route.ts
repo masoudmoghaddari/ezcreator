@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateInstagramPrompt } from "@/app/api/ideas/helpers/prompts";
 import { openai } from "@/utils/openai";
-import { InstagramProfileVideo } from "@/lib/types";
+import { InstagramProfileVideoItem } from "@/lib/types";
 
 export async function POST(req: NextRequest) {
   try {
     const {
       videos,
     }: {
-      videos: InstagramProfileVideo[];
+      videos: InstagramProfileVideoItem[];
     } = await req.json();
 
     if (!videos || !Array.isArray(videos) || videos.length === 0) {
@@ -26,18 +26,18 @@ export async function POST(req: NextRequest) {
         {
           role: "system",
           content:
-            "You are a professional Instagram strategist. Help creators generate viral content ideas.",
+            "You are an expert Instagram content strategist and data analyst. Your job is to study video performance, understand audience behavior, detect content trends, and generate original, high-engagement content ideas that align with a channel’s niche and have strong viral potential. Prioritize creativity, niche relevance, and trend-awareness.",
         },
         {
           role: "user",
           content: prompt,
         },
       ],
-      temperature: 0.8,
+      temperature: 0.7,
     });
 
     const ideas = response.choices?.[0]?.message?.content || "";
-
+    console.log("ideas length:", ideas.length);
     return NextResponse.json({ ideas });
   } catch (error) {
     console.error("Idea generation error:", error);
