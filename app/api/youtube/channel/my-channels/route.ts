@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
-import { getLocalUserId } from "../../common/getLocalUserId";
 import { YoutubeUserChannel } from "@/lib/types";
+import { getLocalUserId } from "@/utils/getLocalUserId";
 
 export async function GET() {
   try {

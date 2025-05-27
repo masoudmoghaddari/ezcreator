@@ -13,10 +13,10 @@ import { useFetchInstagramProfiles } from "@/lib/hooks/instagram/use-fetch-insta
 import { useInstagramVideos } from "@/lib/hooks/instagram/use-instagram-videos";
 import { useSyncInstagramProfile } from "@/lib/hooks/instagram/use-sync-instagram-profile";
 import { useGenerateIdeas } from "@/lib/hooks/common/use-generate-ideas";
-import { sortInstagramVideos } from "@/app/api/youtube/common/sortVideos";
 import { InstagramProfile, Idea, SortBy, SortOrder } from "@/lib/types";
 import { VideoTable } from "./components/VideoTable";
 import GeneratedIdeas from "../../youtube/channels/components/GeneratedIdeas";
+import { sortInstagramVideos } from "@/lib/utils/sortVideos";
 
 export default function InstagramStudioPage() {
   const [selectedProfileId, setSelectedProfileId] = useState<string | null>(

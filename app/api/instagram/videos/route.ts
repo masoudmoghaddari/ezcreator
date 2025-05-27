@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/utils/prisma";
 import { currentUser } from "@clerk/nextjs/server";
-import { getLocalUserId } from "../../youtube/common/getLocalUserId";
+import { getLocalUserId } from "@/utils/getLocalUserId";
 
 export async function GET(req: NextRequest) {
   try {

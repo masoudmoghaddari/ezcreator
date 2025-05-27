@@ -5,7 +5,7 @@ import {
   fetchVideoDetails,
   parseDuration,
 } from "../../common/fetchVideos";
-import { getLocalUserId } from "../../common/getLocalUserId";
+import { getLocalUserId } from "@/utils/getLocalUserId";
 import { extractIdentifier } from "./extractIdentifier";
 
 const API_KEY = process.env.YOUTUBE_API_KEY!;

@@ -3,6 +3,7 @@ import {
   InstagramProfileVideoItem,
   SortBy,
   SortOrder,
+  TikTokVideo,
 } from "@/lib/types";
 
 export const sortYoutubeVideos = (
@@ -61,6 +62,48 @@ export const sortInstagramVideos = (
 
     const keyMap = {
       views: "view_count",
+      likes: "like_count",
+      comments: "comment_count",
+      duration: "duration",
+      published_at: "timestamp",
+      engagement_score: "engagement_score",
+    } as const;
+
+    const key = keyMap[sortBy as keyof typeof keyMap];
+
+    if (key) {
+      const aVal = a[key] ?? 0;
+      const bVal = b[key] ?? 0;
+
+      if (key === "timestamp") {
+        return sortOrder === "asc"
+          ? new Date(aVal).getTime() - new Date(bVal).getTime()
+          : new Date(bVal).getTime() - new Date(aVal).getTime();
+      }
+
+      return sortOrder === "asc"
+        ? (aVal as number) - (bVal as number)
+        : (bVal as number) - (aVal as number);
+    }
+
+    return 0;
+  });
+};
+
+export const sortTiktokVideos = (
+  videos: TikTokVideo[],
+  sortBy: SortBy,
+  sortOrder: SortOrder
+): TikTokVideo[] => {
+  return [...videos].sort((a, b) => {
+    if (sortBy === "title") {
+      return sortOrder === "asc"
+        ? a.text.localeCompare(b.text)
+        : b.text.localeCompare(a.text);
+    }
+
+    const keyMap = {
+      views: "play_count",
       likes: "like_count",
       comments: "comment_count",
       duration: "duration",

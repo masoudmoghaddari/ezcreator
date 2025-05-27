@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { extractInstagramUsernameFromUrl } from "@/lib/utils/extractInstagramUsernameFromUrl";
 import { ApifyClient } from "apify-client";
 import { prisma } from "@/utils/prisma";
-import { getLocalUserId } from "../../youtube/common/getLocalUserId";
+import { getLocalUserId } from "@/utils/getLocalUserId";
 
 export async function POST(req: NextRequest) {
   try {

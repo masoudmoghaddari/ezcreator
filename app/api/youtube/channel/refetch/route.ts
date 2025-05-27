@@ -5,7 +5,7 @@ import {
   fetchVideoDetails,
   parseDuration,
 } from "../../common/fetchVideos";
-import { getLocalUserId } from "../../common/getLocalUserId";
+import { getLocalUserId } from "@/utils/getLocalUserId";
 
 export async function POST(req: NextRequest) {
   try {

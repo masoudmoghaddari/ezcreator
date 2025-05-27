@@ -14,8 +14,8 @@ import { YoutubeChannel, Idea, SortBy, SortOrder } from "@/lib/types";
 import { Spinner } from "@/components/ui/spinner";
 import { useSyncChannel } from "@/lib/hooks/youtube/use-sync-channel";
 import { useGenerateChannelIdeas } from "@/lib/hooks/youtube/use-generate-channel-ideas";
-import { sortYoutubeVideos } from "@/app/api/youtube/common/sortVideos";
 import { YouTube } from "@/components/icons";
+import { sortYoutubeVideos } from "@/lib/utils/sortVideos";
 
 export default function YoutubeStudioPage() {
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(

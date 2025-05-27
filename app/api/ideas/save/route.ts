@@ -1,7 +1,7 @@
+import { getLocalUserId } from "@/utils/getLocalUserId";
 import { prisma } from "@/utils/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getLocalUserId } from "../../youtube/common/getLocalUserId";
 
 const ideaSchema = z.object({
   title: z.string(),

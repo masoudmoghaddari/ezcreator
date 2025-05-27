@@ -159,8 +159,8 @@ model InstagramVideo {
 model TikTokProfile {
   id              String  @id @default(cuid())
   user_id         String
-  username        String // e.g., "khaby.lame"
-  nickname        String // e.g., "Khabane lame"
+  username        String
+  nickname        String
   profile_url     String
   profile_picture String
   verified        Boolean @default(false)
@@ -183,7 +183,7 @@ model TikTokProfile {
 model TikTokVideo {
   id            String   @id @default(cuid())
   profile_id    String
-  video_id      String   @unique
+  video_id      String
   text          String
   hashtags      String? // comma-separated
   play_count    Int?
